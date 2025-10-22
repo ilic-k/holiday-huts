@@ -27,4 +27,7 @@ const cottageSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+cottageSchema.index({ name: 1 });
+cottageSchema.index({ place: 1 });
+
 export default mongoose.model('Cottage', cottageSchema);

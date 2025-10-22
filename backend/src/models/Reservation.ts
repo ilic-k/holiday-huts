@@ -25,4 +25,6 @@ const reservationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+reservationSchema.index({ createdAt: -1 });
+
 export default mongoose.model('Reservation', reservationSchema);
