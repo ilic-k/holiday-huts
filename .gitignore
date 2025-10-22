@@ -1,0 +1,80 @@
+# === GLOBALNO ===
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.bak
+*.swp
+*.env
+.env.*
+.env.local
+.env.development.local
+.env.production.local
+
+# === NODE / EXPRESS / BACKEND ===
+node_modules/
+dist/
+build/
+coverage/
+uploads/
+tmp/
+*.tsbuildinfo
+
+# ako imaš TypeScript u backu
+backend/**/*.js
+backend/**/*.js.map
+
+# === ANGULAR / FRONTEND ===
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.cache/
+frontend/.vscode/
+frontend/coverage/
+frontend/tmp/
+frontend/.sass-cache/
+
+# === TEST / TOOLS ===
+.idea/
+.vscode/
+*.iml
+.nyc_output/
+coverage/
+reports/
+jest-report/
+jest-html-reporters-*.html
+
+# === OS / EDITOR TEMP ===
+*.pid
+*.seed
+*.pid.lock
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# === UPLOADS / IMAGES (dinamički generisano) ===
+uploads/tmp/
+uploads/users/
+uploads/cottages/
+uploads/defaults/
+
+# === MONGODB DUMP / SEED DATA ===
+dump/
+seed/
+data/
+
+# === BUILD / DEPLOY ===
+/dist/
+/build/
+/out/
+/logs/
+/coverage/
+/.terraform/
+/.cache/
+/.next/
+/vercel/
+/.venv/
