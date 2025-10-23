@@ -103,8 +103,9 @@ export class AdminController {
     }
   };
 
-    getLowRatedCottages: RequestHandler = async (req, res, next) => {
+    getAllCottages: RequestHandler = async (req, res, next) => {
         try {
+            // Agregacija za vikendice sa poslednje 3 ocene
             const pipeline = [
             { $match: { rating: { $ne: null }, status: 'finished' } },
             { $sort: { endDate: -1 } },
@@ -121,22 +122,25 @@ export class AdminController {
                     }
                 }
                 }
-            },
-            { $match: { lowCount: 3 } }
+            }
             ];
 
         const agg = await Reservation.aggregate<any>(pipeline as any);
 
-        // dovedi podatke o vikendicama
-        const cottageIds = agg.map((a: any) => a._id);
-        const cottages = await Cottage.find({ _id: { $in: cottageIds } })
-            .select('title place images ratingAvg ratingCount blockedUntil');
+        // Dovedi SVE vikendice
+        const allCottages = await Cottage.find({})
+            .select('title place images ratingAvg ratingCount blockedUntil owner')
+            .populate('owner', 'username email');
 
-        // mapiranje lowCount uz cottage
+        // Mapiranje lowCount za vikendice sa ocenama
         const lowMap = new Map(agg.map((a: any) => [String(a._id), a.lowCount]));
-        const data = cottages.map(c => ({
+        
+        // Dodaj flag shouldHighlight za svaku vikendicu
+        const data = allCottages.map(c => ({
             ...c.toObject(),
-            lowCount: lowMap.get(String(c._id)) ?? 0
+            lowCount: lowMap.get(String(c._id)) ?? 0,
+            isLowRated: (lowMap.get(String(c._id)) ?? 0) === 3, // flag za crvenu boju
+            isBlocked: c.blockedUntil && c.blockedUntil > new Date()
         }));
 
         res.status(200).json({ message: 'OK', data });

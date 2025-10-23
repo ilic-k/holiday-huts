@@ -13,6 +13,6 @@ adminRouter.delete('/users/:id/reject', controller.rejectUser);
 adminRouter.patch('/cottages/:id/block-48h', controller.blockCottage);
 
 // analitika / kontrole kvaliteta
-adminRouter.get('/cottages/low-rated', controller.getLowRatedCottages);
+adminRouter.get('/cottages/all', controller.getAllCottages);
 
 export default adminRouter;
