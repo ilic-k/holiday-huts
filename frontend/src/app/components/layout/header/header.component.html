@@ -1,0 +1,35 @@
+<nav class="navbar">
+  <a routerLink="/cottages" class="logo">Cottages</a>
+  <span class="spacer"></span>
+
+  <!-- GUEST -->
+  @if (!auth.isLoggedIn()) {
+    <a routerLink="/login">Prijava</a>
+  }
+  @if (!auth.isLoggedIn()) {
+    <a routerLink="/register">Registracija</a>
+  }
+
+  <!-- TURISTA -->
+  @if (auth.hasRole('turista')) {
+    <a routerLink="/me">Moj profil</a>
+  }
+  @if (auth.hasRole('turista')) {
+    <a routerLink="/me/reservations">Moje rezervacije</a>
+  }
+
+  <!-- VLASNIK -->
+  @if (auth.hasRole('vlasnik')) {
+    <a routerLink="/owner/cottages">Moje vikendice</a>
+  }
+
+  <!-- ADMIN -->
+  @if (auth.hasRole('admin')) {
+    <a routerLink="/admin/cottages">Admin panel</a>
+  }
+
+  <!-- LOGOUT -->
+  @if (auth.isLoggedIn()) {
+    <button (click)="logout()">Izloguj se</button>
+  }
+</nav>

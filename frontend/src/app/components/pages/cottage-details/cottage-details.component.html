@@ -1,0 +1,17 @@
+<a routerLink="/cottages">← Početni ekran</a>
+<h2>{{cottage?.title}}</h2>
+<p>{{cottage?.place}}</p>
+
+@if (auth.hasRole('turista')) {
+  <div>
+    <form (ngSubmit)="reserve()">
+      <input type="date" [(ngModel)]="startDate" name="startDate" required />
+      <input type="date" [(ngModel)]="endDate" name="endDate" required />
+      <input type="number" [(ngModel)]="adults" name="adults" min="1" required />
+      <input type="number" [(ngModel)]="children" name="children" min="0" />
+      <button class="btn btn-success">Rezerviši</button>
+    </form>
+  </div>
+} @else {
+  <a routerLink="/login">Prijavi se</a> da bi rezervisao.
+}
