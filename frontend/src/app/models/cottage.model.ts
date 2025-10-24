@@ -1,11 +1,13 @@
+import { User } from "./user.model";
+
 export class Cottage {
-  _id: string;
-  title: string;
-  place: string;
-  images: string[];
-  pricing?: { summer: number; winter: number };
-  ratingAvg?: number;
-  ratingCount?: number;
-  blockedUntil?: string; // ISO string iz BE
-  owner?: { _id: string; username: string; email: string };
+  _id = '';
+  title = '';
+  place = '';
+  images: string[] = [];
+  pricing = { summer: 0, winter: 0 };
+  ratingAvg = 0;
+  ratingCount = 0;
+  blockedUntil = '';
+  owner: User | null = null;
 }

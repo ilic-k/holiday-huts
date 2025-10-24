@@ -1,21 +1,32 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { CottageService } from '../../../services/cottage.service';
+import { Cottage } from '../../../models/cottage.model';
 
 @Component({
   selector: 'app-cottages-list',
   standalone: true,
-  imports: [FormsModule, RouterLink],
-  templateUrl: './cottages-list.component.html',
-  styleUrl: './cottages-list.component.css'
+  imports: [RouterLink, FormsModule],
+  templateUrl: './cottages-list.component.html'
 })
 export class CottagesListComponent {
-  q: string = '';
-  place: string = '';
+  service = inject(CottageService);
+  cottages: Cottage[] = [];
+  q = '';
+  place = '';
 
-  cottages: any[] = [];
+  ngOnInit() { this.load(); }
 
-  load(){
-    
+  load() {
+    this.service.getAll(this.q, this.place).subscribe({
+      next: (res: any) => {
+        // Backend returns { cottages: [...] }
+        this.cottages = Array.isArray(res)
+          ? res
+          : (res?.cottages ?? res?.data ?? []);
+      },
+      error: err => console.error(err)
+    });
   }
 }
