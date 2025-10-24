@@ -1,14 +1,19 @@
 import { Router } from 'express';
 import { CottageController } from '../controllers/cottage.controller';
+import { CottageOwnerController } from '../controllers/cottage.owner.controller';
 
 const cottageRouter = Router();
-const controller = new CottageController();
+const cottageController = new CottageController();
+const ownerController = new CottageOwnerController
 
-cottageRouter.get('/', controller.getAll);
-cottageRouter.get('/:id', controller.getOne);
+// PUBLIC
+cottageRouter.get('/', cottageController.getAll);
+cottageRouter.get('/:id', cottageController.getOne);
 
-// ToDo
-// cottageRouter.post('/', controller.create);
-// cottageRouter.get('/mine', controller.getMine);
+// OWNER
+cottageRouter.get('/mine/:ownerId', ownerController.getMine);
+cottageRouter.post('/', ownerController.create);
+cottageRouter.patch('/:id', ownerController.update);
+cottageRouter.delete('/:id', ownerController.remove);
 
 export default cottageRouter;
