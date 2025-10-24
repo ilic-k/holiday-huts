@@ -2,16 +2,17 @@ import mongoose from 'mongoose';
 
 const reservationSchema = new mongoose.Schema(
   {
-    cottage: { type: mongoose.Schema.Types.ObjectId, ref: 'Cottage' },
-    tourist: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    cottage: { type: mongoose.Schema.Types.ObjectId, ref: 'Cottage', required: true },
+    tourist: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 
-    startDate: Date,
-    endDate: Date,
+    startDate: { type: Date, required: true },
+    endDate: { type: Date, required: true },
 
-    adults: Number,
-    children: Number,
+    adults: { type: Number, required: true, min: 1 },
+    children: { type: Number, default: 0 },
 
-    priceTotal: Number,
+    priceTotal: { type: Number, required: true },
+
     status: {
       type: String,
       enum: ['pending', 'approved', 'rejected', 'cancelled', 'finished'],
@@ -20,7 +21,7 @@ const reservationSchema = new mongoose.Schema(
 
     comment: String,
     rating: Number,
-    ownerNote: String,
+    ownerNote: { type: String, default: '' }
   },
   { timestamps: true }
 );

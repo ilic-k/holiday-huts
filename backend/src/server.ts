@@ -6,7 +6,7 @@ import authRoutes from './routers/auth.router';
 import userRouter from './routers/user.router';
 import adminRouter from './routers/admin.router';
 import cottageRouter from './routers/cottage.router';
-import reservationRouter from './routers/reservation,router';
+import reservationRouter from './routers/reservation.router';
 
 const app = express()
 
