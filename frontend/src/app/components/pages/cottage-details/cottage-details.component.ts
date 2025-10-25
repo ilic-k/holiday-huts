@@ -27,6 +27,7 @@ export class CottageDetailsComponent implements AfterViewInit {
   children = 0;
   selectedImage = 0;
   private map: L.Map | null = null;
+  private mapReady = false;
 
   ngOnInit() {
     const id = this.route.snapshot.params['id'];
@@ -36,8 +37,10 @@ export class CottageDetailsComponent implements AfterViewInit {
         if (this.cottage?.images?.length > 0) {
           this.selectedImage = 0;
         }
-        // Inicijalizuj mapu nakon učitavanja podataka
-        setTimeout(() => this.initMap(), 100);
+        // Pokušaj inicijalizovati mapu ako je view spreman
+        if (this.mapReady && this.cottage?.coords) {
+          setTimeout(() => this.initMap(), 100);
+        }
       }
     });
     
@@ -47,35 +50,49 @@ export class CottageDetailsComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Mapa će biti inicijalizovana nakon učitavanja podataka o vikendici
+    this.mapReady = true;
+    if (this.cottage?.coords) {
+      setTimeout(() => this.initMap(), 100);
+    }
   }
 
   initMap() {
     if (!this.cottage?.coords?.lat || !this.cottage?.coords?.lng) return;
     
     const mapEl = document.getElementById('map');
-    if (!mapEl) return;
+    if (!mapEl || this.map) return;
 
-    // Kreiranje mape
-    this.map = L.map('map').setView([this.cottage.coords.lat, this.cottage.coords.lng], 13);
+    try {
+      this.map = L.map('map', {
+        center: [this.cottage.coords.lat, this.cottage.coords.lng],
+        zoom: 13,
+        scrollWheelZoom: true
+      });
 
-    // Dodavanje tile layer-a (OpenStreetMap)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(this.map);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+      }).addTo(this.map);
 
-    // Dodavanje markera
-    const icon = L.icon({
-      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-      iconSize: [25, 41],
-      iconAnchor: [12, 41]
-    });
+      const customIcon = L.icon({
+        iconUrl: '/assets/leaflet/marker-icon.png',
+        iconRetinaUrl: '/assets/leaflet/marker-icon-2x.png',
+        shadowUrl: '/assets/leaflet/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+      });
 
-    L.marker([this.cottage.coords.lat, this.cottage.coords.lng], { icon })
-      .addTo(this.map)
-      .bindPopup(`<b>${this.cottage.title}</b><br>${this.cottage.place}`)
-      .openPopup();
+      L.marker([this.cottage.coords.lat, this.cottage.coords.lng], { icon: customIcon })
+        .addTo(this.map)
+        .bindPopup(`<b>${this.cottage.title}</b><br>${this.cottage.place}`)
+        .openPopup();
+
+      setTimeout(() => this.map?.invalidateSize(), 100);
+    } catch (error) {
+      console.error('Error initializing map:', error);
+    }
   }
 
   getStars(rating: number): string {
