@@ -15,11 +15,32 @@ export class CottagesListComponent {
   cottages: Cottage[] = [];
   q = '';
   place = '';
+  sort = '';
 
-  ngOnInit() { this.load(); }
+  // Statistika
+  stats: any = null;
+  loadingStats = true;
+
+  ngOnInit() {
+    this.loadStats();
+    this.load();
+  }
+
+  loadStats() {
+    this.service.getStats().subscribe({
+      next: (res: any) => {
+        this.stats = res?.stats ?? null;
+        this.loadingStats = false;
+      },
+      error: err => {
+        console.error(err);
+        this.loadingStats = false;
+      }
+    });
+  }
 
   load() {
-    this.service.getAll(this.q, this.place).subscribe({
+    this.service.getAll(this.q, this.place, this.sort).subscribe({
       next: (res: any) => {
         // Backend returns { cottages: [...] }
         this.cottages = Array.isArray(res)
@@ -28,5 +49,23 @@ export class CottagesListComponent {
       },
       error: err => console.error(err)
     });
+  }
+
+  sortBy(field: 'title' | 'place') {
+    // Toggle sorting: '' → 'field' → '-field' → ''
+    if (this.sort === field) {
+      this.sort = `-${field}`;
+    } else if (this.sort === `-${field}`) {
+      this.sort = '';
+    } else {
+      this.sort = field;
+    }
+    this.load();
+  }
+
+  getSortIcon(field: string): string {
+    if (this.sort === field) return '▲';
+    if (this.sort === `-${field}`) return '▼';
+    return '↕';
   }
 }

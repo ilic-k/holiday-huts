@@ -14,6 +14,10 @@ export class CottageService {
     return this.http.get(`${environment.apiBaseUrl}/cottages`, { params });
   }
 
+  getStats() {
+    return this.http.get(`${environment.apiBaseUrl}/cottages/stats`);
+  }
+
   getOne(id: string) {
     return this.http.get(`${environment.apiBaseUrl}/cottages/${id}`);
   }

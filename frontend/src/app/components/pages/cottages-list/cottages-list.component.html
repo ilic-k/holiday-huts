@@ -1,26 +1,90 @@
-<a routerLink="/cottages">← Početni ekran</a>
-<h2>Sve vikendice</h2>
+<div class="container mt-4">
+  <h2 class="mb-4">Sve vikendice</h2>
 
-<div class="row g-2 mb-3">
-  <div class="col"><input [(ngModel)]="q" class="form-control" placeholder="Pretraga" /></div>
-  <div class="col"><input [(ngModel)]="place" class="form-control" placeholder="Mesto" /></div>
-  <div class="col-auto"><button (click)="load()" class="btn btn-primary">Traži</button></div>
-</div>
+  <!-- Statistika -->
+  @if (loadingStats) {
+    <div class="alert alert-info">Učitavanje statistike...</div>
+  } @else if (stats) {
+    <div class="row g-3 mb-4">
+      <div class="col-md-2">
+        <div class="card text-center p-3">
+          <h5 class="mb-0">{{stats.totalCottages}}</h5>
+          <small class="text-muted">Vikendica</small>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="card text-center p-3">
+          <h5 class="mb-0">{{stats.totalOwners}}</h5>
+          <small class="text-muted">Vlasnika</small>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="card text-center p-3">
+          <h5 class="mb-0">{{stats.totalTourists}}</h5>
+          <small class="text-muted">Turista</small>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="card text-center p-3">
+          <h5 class="mb-0">{{stats.reservations24h}}</h5>
+          <small class="text-muted">Rezervacije (24h)</small>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="card text-center p-3">
+          <h5 class="mb-0">{{stats.reservations7d}}</h5>
+          <small class="text-muted">Rezervacije (7d)</small>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="card text-center p-3">
+          <h5 class="mb-0">{{stats.reservations30d}}</h5>
+          <small class="text-muted">Rezervacije (30d)</small>
+        </div>
+      </div>
+    </div>
+  }
 
-<div class="table-responsive">
-<table class="table">
-  <thead><tr><th>Naziv</th><th>Mesto</th><th>Ocena</th><th></th></tr></thead>
-  <tbody>
-    @for (c of cottages; track c._id) {
-      <tr>
-        <td>{{c.title}}</td>
-        <td>{{c.place}}</td>
-        <td>{{c.ratingAvg || '-'}} </td>
-        <td><a [routerLink]="['/cottages', c._id]">Detalji</a></td>
-      </tr>
-    } @empty {
-      <tr><td colspan="4">Nema rezultata</td></tr>
-    }
-  </tbody>
-</table>
+  <!-- Pretraga -->
+  <div class="row g-2 mb-3">
+    <div class="col-md-4">
+      <input [(ngModel)]="q" class="form-control" placeholder="Pretraga po nazivu" />
+    </div>
+    <div class="col-md-4">
+      <input [(ngModel)]="place" class="form-control" placeholder="Pretraga po mestu" />
+    </div>
+    <div class="col-md-4">
+      <button (click)="load()" class="btn btn-primary w-100">Traži</button>
+    </div>
+  </div>
+
+  <!-- Tabela -->
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead class="table-light">
+        <tr>
+          <th style="cursor: pointer;" (click)="sortBy('title')">
+            Naziv {{ getSortIcon('title') }}
+          </th>
+          <th style="cursor: pointer;" (click)="sortBy('place')">
+            Mesto {{ getSortIcon('place') }}
+          </th>
+          <th>Ocena</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (c of cottages; track c._id) {
+          <tr>
+            <td>{{c.title}}</td>
+            <td>{{c.place}}</td>
+            <td>{{c.ratingAvg || '-'}}</td>
+            <td><a [routerLink]="['/cottages', c._id]" class="btn btn-sm btn-outline-primary">Detalji</a></td>
+          </tr>
+        } @empty {
+          <tr><td colspan="4" class="text-center text-muted">Nema rezultata</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
 </div>
