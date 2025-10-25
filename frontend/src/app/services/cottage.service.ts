@@ -22,6 +22,10 @@ export class CottageService {
     return this.http.get(`${environment.apiBaseUrl}/cottages/${id}`);
   }
 
+  getComments(cottageId: string) {
+    return this.http.get(`${environment.apiBaseUrl}/cottages/${cottageId}/comments`);
+  }
+
   getMine(ownerId: string) {
     return this.http.get(`${environment.apiBaseUrl}/cottages/mine/${ownerId}`);
   }

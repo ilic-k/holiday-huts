@@ -69,20 +69,33 @@
           <th style="cursor: pointer;" (click)="sortBy('place')">
             Mesto {{ getSortIcon('place') }}
           </th>
-          <th>Ocena</th>
-          <th></th>
+          @if (auth.getCurrentUser()) {
+            <th>Ocena</th>
+          }
         </tr>
       </thead>
       <tbody>
         @for (c of cottages; track c._id) {
           <tr>
-            <td>{{c.title}}</td>
+            <td>
+              @if (auth.getCurrentUser()) {
+                <a [routerLink]="['/cottages', c._id]" class="text-decoration-none">{{c.title}}</a>
+              } @else {
+                {{c.title}}
+              }
+            </td>
             <td>{{c.place}}</td>
-            <td>{{c.ratingAvg || '-'}}</td>
-            <td><a [routerLink]="['/cottages', c._id]" class="btn btn-sm btn-outline-primary">Detalji</a></td>
+            @if (auth.getCurrentUser()) {
+              <td>
+                <span class="text-warning d-inline-block" style="width: 100px;">{{ getStars(c.ratingAvg) }}</span>
+                @if (c.ratingAvg) {
+                  <small class="text-muted">({{c.ratingAvg.toFixed(1)}})</small>
+                }
+              </td>
+            }
           </tr>
         } @empty {
-          <tr><td colspan="4" class="text-center text-muted">Nema rezultata</td></tr>
+          <tr><td [attr.colspan]="auth.getCurrentUser() ? 3 : 2" class="text-center text-muted">Nema rezultata</td></tr>
         }
       </tbody>
     </table>

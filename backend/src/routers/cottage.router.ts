@@ -9,6 +9,7 @@ const ownerController = new CottageOwnerController
 // PUBLIC
 cottageRouter.get('/stats', cottageController.getStats);
 cottageRouter.get('/', cottageController.getAll);
+cottageRouter.get('/:id/comments', cottageController.getComments);
 cottageRouter.get('/:id', cottageController.getOne);
 
 // OWNER

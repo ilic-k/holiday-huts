@@ -1,1 +1,107 @@
-<p>my-reservations works!</p>
+<div class="container mt-4">
+  <h2 class="mb-4">Moje rezervacije</h2>
+
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead class="table-light">
+        <tr>
+          <th>Vikendica</th>
+          <th>Period</th>
+          <th>Osobe</th>
+          <th>Cena</th>
+          <th>Status</th>
+          <th>Akcije</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of reservations; track r._id) {
+          <tr>
+            <td>
+              @if (r.cottage?.title) {
+                <strong>{{r.cottage.title}}</strong><br>
+                <small class="text-muted">{{r.cottage.place}}</small>
+              } @else {
+                <span class="text-muted">-</span>
+              }
+            </td>
+            <td>
+              {{r.startDate | date:'dd.MM.yyyy'}} – {{r.endDate | date:'dd.MM.yyyy'}}
+            </td>
+            <td>
+              {{r.adults}} odraslih
+              @if (r.children > 0) {
+                <br><small>{{r.children}} dece</small>
+              }
+            </td>
+            <td>{{r.priceTotal}} EUR</td>
+            <td>
+              <span class="badge {{getStatusBadgeClass(r.status)}}">
+                {{getStatusText(r.status)}}
+              </span>
+              @if (r.ownerNote) {
+                <br><small class="text-muted">Napomena: {{r.ownerNote}}</small>
+              }
+            </td>
+            <td>
+              <!-- Otkaži dugme -->
+              @if (canCancel(r)) {
+                <button (click)="cancelReservation(r._id)" class="btn btn-sm btn-danger mb-1">
+                  Otkaži
+                </button>
+              }
+
+              <!-- Ostavi ocenu dugme -->
+              @if (canReview(r) && reviewingId !== r._id) {
+                <button (click)="startReview(r._id)" class="btn btn-sm btn-primary mb-1">
+                  Ostavi ocenu
+                </button>
+              }
+
+              <!-- Forma za ocenu (inline) -->
+              @if (reviewingId === r._id) {
+                <div class="border p-2 bg-light">
+                  <div class="mb-2">
+                    <label class="form-label small">Ocena (1-5):</label>
+                    <select [(ngModel)]="reviewRating" class="form-select form-select-sm">
+                      <option [value]="1">1 - Veoma loše</option>
+                      <option [value]="2">2 - Loše</option>
+                      <option [value]="3">3 - Prosečno</option>
+                      <option [value]="4">4 - Dobro</option>
+                      <option [value]="5">5 - Odlično</option>
+                    </select>
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label small">Komentar:</label>
+                    <textarea [(ngModel)]="reviewComment" 
+                              class="form-control form-control-sm" 
+                              rows="3"
+                              maxlength="500"
+                              placeholder="Vaše iskustvo..."></textarea>
+                  </div>
+                  <button (click)="submitReview()" class="btn btn-sm btn-success me-1">Pošalji</button>
+                  <button (click)="cancelReview()" class="btn btn-sm btn-secondary">Otkaži</button>
+                </div>
+              }
+
+              <!-- Prikaz ocene ako je već ostavljena -->
+              @if (r.rating) {
+                <div class="text-muted small">
+                  <strong>Vaša ocena:</strong> {{r.rating}}/5
+                  @if (r.comment) {
+                    <br>"{{r.comment}}"
+                  }
+                </div>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="text-center text-muted py-4">
+              Nemate nijednu rezervaciju
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

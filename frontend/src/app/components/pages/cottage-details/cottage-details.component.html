@@ -1,17 +1,144 @@
-<a routerLink="/cottages">← Početni ekran</a>
-<h2>{{cottage?.title}}</h2>
-<p>{{cottage?.place}}</p>
+<div class="container mt-4">
+  <a routerLink="/cottages" class="btn btn-link mb-3">← Nazad na sve vikendice</a>
 
-@if (auth.hasRole('turista')) {
-  <div>
-    <form (ngSubmit)="reserve()">
-      <input type="date" [(ngModel)]="startDate" name="startDate" required />
-      <input type="date" [(ngModel)]="endDate" name="endDate" required />
-      <input type="number" [(ngModel)]="adults" name="adults" min="1" required />
-      <input type="number" [(ngModel)]="children" name="children" min="0" />
-      <button class="btn btn-success">Rezerviši</button>
-    </form>
-  </div>
-} @else {
-  <a routerLink="/login">Prijavi se</a> da bi rezervisao.
-}
+  @if (cottage) {
+    <div class="row">
+      <!-- Leva kolona - galerija i osnovne info -->
+      <div class="col-md-8">
+        <h2>{{cottage.title}}</h2>
+        <p class="text-muted"><i class="bi bi-geo-alt"></i> {{cottage.place}}</p>
+
+        <!-- Galerija slika -->
+        @if (cottage.images && cottage.images.length > 0) {
+          <div class="card mb-3">
+            <img [src]="'http://localhost:4000/' + cottage.images[selectedImage]" 
+                 class="card-img-top" 
+                 style="max-height: 400px; object-fit: cover;" 
+                 alt="{{cottage.title}}">
+            <div class="card-body">
+              <div class="d-flex gap-2 overflow-auto">
+                @for (img of cottage.images; track $index) {
+                  <img [src]="'http://localhost:4000/' + img" 
+                       (click)="selectImage($index)"
+                       class="img-thumbnail"
+                       style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;"
+                       [class.border-primary]="selectedImage === $index"
+                       alt="Thumbnail">
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Opis i usluge -->
+        <div class="card mb-3">
+          <div class="card-header"><strong>Usluge</strong></div>
+          <div class="card-body">
+            <p>{{cottage.services || 'Nema dostupnih informacija o uslugama'}}</p>
+          </div>
+        </div>
+
+        <!-- Komentari i ocene -->
+        <div class="card mb-3">
+          <div class="card-header">
+            <strong>Komentari i ocene</strong>
+            @if (cottage.ratingAvg) {
+              <span class="ms-2 text-warning">{{ getStars(cottage.ratingAvg) }} ({{cottage.ratingAvg.toFixed(1)}})</span>
+            }
+          </div>
+          <div class="card-body">
+            @if (comments.length > 0) {
+              @for (c of comments; track c._id) {
+                <div class="border-bottom pb-2 mb-2">
+                  <div class="d-flex align-items-center mb-1">
+                    <strong>{{c.tourist?.username || 'Anoniman'}}</strong>
+                    @if (c.rating) {
+                      <span class="ms-2 text-warning">{{ getStars(c.rating) }}</span>
+                    }
+                    <small class="ms-auto text-muted">{{c.createdAt | date:'short'}}</small>
+                  </div>
+                  @if (c.comment) {
+                    <p class="mb-0">{{c.comment}}</p>
+                  }
+                </div>
+              }
+            } @else {
+              <p class="text-muted">Još nema komentara</p>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Desna kolona - cenovnik, kontakt, rezervacija -->
+      <div class="col-md-4">
+        <!-- Cenovnik -->
+        <div class="card mb-3">
+          <div class="card-header"><strong>Cenovnik</strong></div>
+          <div class="card-body">
+            <p><strong>Letnja sezona:</strong> {{cottage.pricing?.summer || '-'}} EUR/noć</p>
+            <p><strong>Zimska sezona:</strong> {{cottage.pricing?.winter || '-'}} EUR/noć</p>
+          </div>
+        </div>
+
+        <!-- Kontakt -->
+        <div class="card mb-3">
+          <div class="card-header"><strong>Kontakt</strong></div>
+          <div class="card-body">
+            <p><i class="bi bi-telephone"></i> {{cottage.phone || 'Nije dostupno'}}</p>
+          </div>
+        </div>
+
+        <!-- Mapa -->
+        @if (cottage.coords?.lat && cottage.coords?.lng) {
+          <div class="card mb-3">
+            <div class="card-header"><strong>Lokacija</strong></div>
+            <div class="card-body p-0">
+              <div id="map" style="height: 300px; width: 100%;"></div>
+            </div>
+          </div>
+        }
+
+        <!-- Rezervacija forma -->
+        @if (auth.hasRole('turista')) {
+          <div class="card">
+            <div class="card-header bg-success text-white"><strong>Rezerviši</strong></div>
+            <div class="card-body">
+              <form (ngSubmit)="reserve()">
+                <div class="mb-2">
+                  <label class="form-label">Datum dolaska</label>
+                  <input type="date" [(ngModel)]="startDate" name="startDate" class="form-control" required />
+                </div>
+                <div class="mb-2">
+                  <label class="form-label">Datum odlaska</label>
+                  <input type="date" [(ngModel)]="endDate" name="endDate" class="form-control" required />
+                </div>
+                <div class="mb-2">
+                  <label class="form-label">Odrasli</label>
+                  <input type="number" [(ngModel)]="adults" name="adults" min="1" class="form-control" required />
+                </div>
+                <div class="mb-2">
+                  <label class="form-label">Deca</label>
+                  <input type="number" [(ngModel)]="children" name="children" min="0" class="form-control" />
+                </div>
+                <button type="submit" class="btn btn-success w-100">Rezerviši</button>
+              </form>
+            </div>
+          </div>
+        } @else {
+          <div class="card">
+            <div class="card-body text-center">
+              <p>Morate biti prijavljeni kao turista da biste rezervisali vikendicu.</p>
+              <a routerLink="/login" class="btn btn-primary">Prijavi se</a>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="text-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Učitavanje...</span>
+      </div>
+    </div>
+  }
+</div>

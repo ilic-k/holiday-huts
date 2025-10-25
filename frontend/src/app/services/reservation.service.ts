@@ -11,7 +11,7 @@ export class ReservationService {
   }
 
   getMine(touristId: string) {
-    return this.http.get(`${environment.apiBaseUrl}/reservations/mine`, { params: { touristId } });
+    return this.http.get(`${environment.apiBaseUrl}/reservations/mine/${touristId}`);
   }
 
   approve(id: string) {

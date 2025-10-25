@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CottageService } from '../../../services/cottage.service';
+import { AuthService } from '../../../services/auth.service';
 import { Cottage } from '../../../models/cottage.model';
 
 @Component({
@@ -12,6 +13,7 @@ import { Cottage } from '../../../models/cottage.model';
 })
 export class CottagesListComponent {
   service = inject(CottageService);
+  auth = inject(AuthService);
   cottages: Cottage[] = [];
   q = '';
   place = '';
@@ -67,5 +69,13 @@ export class CottagesListComponent {
     if (this.sort === field) return '▲';
     if (this.sort === `-${field}`) return '▼';
     return '↕';
+  }
+
+  getStars(rating: number): string {
+    if (!rating) return '☆☆☆☆☆';
+    const full = Math.floor(rating);
+    const half = rating % 1 >= 0.5 ? 1 : 0;
+    const empty = 5 - full - half;
+    return '★'.repeat(full) + (half ? '⯨' : '') + '☆'.repeat(empty);
   }
 }

@@ -85,4 +85,24 @@ export class CottageController {
             next(error);
         }
     };
+
+    getComments: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const comments = await Reservation.find({
+                cottage: req.params.id,
+                status: 'finished',
+                $or: [
+                    { comment: { $exists: true, $ne: '' } },
+                    { rating: { $exists: true, $ne: null } }
+                ]
+            })
+            .populate('tourist', 'username image')
+            .select('comment rating createdAt tourist')
+            .sort({ createdAt: -1 });
+
+            res.status(200).json({ message: "Uspešno dobijeni komentari", comments });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
