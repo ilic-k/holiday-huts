@@ -1,1 +1,95 @@
-<p>profile works!</p>
+<a routerLink="/cottages">← Nazad na početni</a>
+<h2 class="mb-3">Moj profil</h2>
+
+@if (loading) {
+  <div>Učitavanje…</div>
+} @else {
+
+  @if (errorMsg) {
+    <div class="alert alert-danger">{{ errorMsg }}</div>
+  }
+  @if (successMsg) {
+    <div class="alert alert-success">{{ successMsg }}</div>
+  }
+
+  <div class="row g-4">
+    <!-- Levo: podaci -->
+    <div class="col-md-8">
+      <form (ngSubmit)="saveProfile()" class="d-flex flex-column gap-3">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Korisničko ime</label>
+            <input class="form-control" [value]="user.username" disabled />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Uloga</label>
+            <input class="form-control" [value]="user.role" disabled />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Ime</label>
+            <input [(ngModel)]="name" name="name" class="form-control" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Prezime</label>
+            <input [(ngModel)]="lastname" name="lastname" class="form-control" />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Pol</label>
+            <select [(ngModel)]="gender" name="gender" class="form-select">
+              <option value="">—</option>
+              <option value="M">M</option>
+              <option value="Z">Z</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Telefon</label>
+            <input [(ngModel)]="phone" name="phone" class="form-control" />
+          </div>
+
+          <div class="col-md-8">
+            <label class="form-label">Email</label>
+            <input [(ngModel)]="email" name="email" type="email" class="form-control" />
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Kreditna kartica</label>
+            <input [(ngModel)]="creditCard" name="creditCard" class="form-control" />
+          </div>
+
+          <div class="col-12">
+            <button class="btn btn-success" [disabled]="loading">Sačuvaj profil</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Desno: avatar + promena lozinke -->
+    <div class="col-md-4 d-flex flex-column gap-4">
+      <div class="card p-3">
+        <h5>Profilna slika</h5>
+        <div class="mb-2">
+          <img
+            [src]="imagePreview || user.image || 'assets/avatar-placeholder.png'"
+            alt="avatar"
+            style="max-width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px;"
+          />
+        </div>
+        <input type="file" (change)="onFileChange($event)" class="form-control" accept="image/*" />
+      </div>
+
+      <div class="card p-3">
+        <h5>Promena lozinke</h5>
+        <div class="d-flex flex-column gap-2">
+          <input [(ngModel)]="oldPassword" name="oldPassword" type="password" placeholder="Stara lozinka" class="form-control" />
+          <input [(ngModel)]="newPassword" name="newPassword" type="password" placeholder="Nova lozinka" class="form-control" />
+          <input [(ngModel)]="confirmPassword" name="confirmPassword" type="password" placeholder="Potvrda lozinke" class="form-control" />
+          <button class="btn btn-outline-primary" (click)="changePassword()">Promeni lozinku</button>
+          @if (pwdMsg) { <div class="small mt-1">{{ pwdMsg }}</div> }
+        </div>
+      </div>
+    </div>
+  </div>
+}

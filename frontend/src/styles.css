@@ -1,1 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Sticky footer setup */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}

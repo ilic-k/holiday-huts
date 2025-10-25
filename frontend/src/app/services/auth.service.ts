@@ -40,11 +40,15 @@ export class AuthService {
     );
   }
 
-  getProfile(id: string) {
-    return this.http.get<any>(`${environment.apiBaseUrl}/users/${id}`);
+  getProfile(username: string) {
+    return this.http.get<any>(`${environment.apiBaseUrl}/user/${username}`);
   }
 
-  updateProfile(id: string, body: any) {
-    return this.http.patch<any>(`${environment.apiBaseUrl}/users/${id}`, body);
+  updateProfile(username: string, body: any) {
+    return this.http.patch<any>(`${environment.apiBaseUrl}/user/${username}`, body);
+  }
+
+  changePassword(body: { userId: string; oldPassword: string; newPassword: string }) {
+    return this.http.patch<{ message: string }>(`${environment.apiBaseUrl}/auth/change-password`, body);
   }
 }

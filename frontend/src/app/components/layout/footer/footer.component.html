@@ -1,1 +1,40 @@
-<p>footer works!</p>
+<footer class="footer mt-auto py-4 bg-light border-top">
+  <div class="container">
+    <div class="row">
+      <!-- O nama -->
+      <div class="col-md-4 mb-3">
+        <h5>Holiday Huts</h5>
+        <p class="text-muted">
+          Vaša destinacija za najlepše vikendice. Pronađite savršeno mesto za odmor.
+        </p>
+      </div>
+
+      <!-- Linkovi -->
+      <div class="col-md-4 mb-3">
+        <h5>Linkovi</h5>
+        <ul class="list-unstyled">
+          <li><a routerLink="/cottages" class="text-decoration-none">Sve vikendice</a></li>
+          <li><a routerLink="/login" class="text-decoration-none">Prijava</a></li>
+          <li><a routerLink="/register" class="text-decoration-none">Registracija</a></li>
+        </ul>
+      </div>
+
+      <!-- Kontakt -->
+      <div class="col-md-4 mb-3">
+        <h5>Kontakt</h5>
+        <ul class="list-unstyled text-muted">
+          <li><i class="bi bi-envelope"></i> info&#64;holidayhuts.com</li>
+          <li><i class="bi bi-telephone"></i> +381 11 123 4567</li>
+          <li><i class="bi bi-geo-alt"></i> Beograd, Srbija</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="row mt-3">
+      <div class="col-12 text-center text-muted">
+        <small>&copy; {{ currentYear }} Holiday Huts. Sva prava zadržana.</small>
+      </div>
+    </div>
+  </div>
+</footer>
