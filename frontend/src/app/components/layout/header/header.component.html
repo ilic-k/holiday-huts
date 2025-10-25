@@ -8,7 +8,14 @@
   }
 
   @if (auth.hasRole('turista')) {
-    <a routerLink="/me">Moj profil</a>
+    <div class="d-flex align-items-center gap-2">
+      <img 
+        [src]="getUserImageUrl()" 
+        alt="avatar" 
+        style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%; border: 1px solid #dee2e6;"
+      />
+      <a routerLink="/me">Moj profil</a>
+    </div>
     <a routerLink="/me/reservations">Moje rezervacije</a>
   }
 

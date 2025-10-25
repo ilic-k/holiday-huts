@@ -69,12 +69,12 @@
     <!-- Desno: avatar + promena lozinke -->
     <div class="col-md-4 d-flex flex-column gap-4">
       <div class="card p-3">
-        <h5>Profilna slika</h5>
-        <div class="mb-2">
+        <h5 class="text-center">Profilna slika</h5>
+        <div class="mb-2 d-flex justify-content-center">
           <img
-            [src]="imagePreview || user.image || 'assets/avatar-placeholder.png'"
+            [src]="getImageUrl()"
             alt="avatar"
-            style="max-width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px;"
+            style="width: 200px; height: 200px; object-fit: cover; border-radius: 50%;"
           />
         </div>
         <input type="file" (change)="onFileChange($event)" class="form-control" accept="image/*" />

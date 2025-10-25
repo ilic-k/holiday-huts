@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { User } from '../../../models/user.model';
 import { AuthService } from '../../../services/auth.service';
+import { environment } from '../../../../env/environment';
 
 const PASS_RE =
 /^(?=.{6,10}$)(?=[A-Za-z])[A-Za-z](?=(?:.*[a-z]){3,})(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).*$/;
@@ -95,6 +96,20 @@ export class ProfileComponent {
     const reader = new FileReader();
     reader.onload = () => (this.imagePreview = String(reader.result));
     reader.readAsDataURL(file);
+  }
+
+  getImageUrl(): string {
+    // Ako ima preview nakon upload-a
+    if (this.imagePreview) return this.imagePreview;
+    
+    // Ako user ima sliku sa backend-a
+    if (this.user.image) {
+      // Backend vraća putanju kao 'uploads/defaults/user.png' ili 'uploads/users/xyz.png'
+      return `${environment.uploadsUrl}/${this.user.image}`;
+    }
+    
+    // Fallback placeholder
+    return 'assets/avatar-placeholder.png';
   }
 
   saveProfile() {
