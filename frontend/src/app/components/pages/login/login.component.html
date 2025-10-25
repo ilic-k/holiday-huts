@@ -1,1 +1,38 @@
-<p>login works!</p>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-4">
+      <h2 class="text-center mb-4">Prijava</h2>
+
+      <form (ngSubmit)="submit()" class="d-flex flex-column gap-2">
+        <input
+          [(ngModel)]="username"
+          name="username"
+          class="form-control"
+          placeholder="Korisničko ime"
+          required
+          autocomplete="username"/>
+
+        <input
+          [(ngModel)]="password"
+          name="password"
+          class="form-control"
+          type="password"
+          placeholder="Lozinka"
+          required
+          autocomplete="current-password"/>
+
+        <button class="btn btn-primary" [disabled]="loading">
+          @if (loading) { Učitavanje… } @else { Prijavi se }
+        </button>
+
+        @if (errorMsg) {
+          <div class="alert alert-danger mt-2">{{ errorMsg }}</div>
+        }
+
+        <div class="text-center mt-3">
+          <a routerLink="/register">Nemaš nalog? Registruj se</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

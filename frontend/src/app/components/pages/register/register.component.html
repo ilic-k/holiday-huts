@@ -1,1 +1,175 @@
-<p>register works!</p>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <h2 class="text-center mb-4">Registracija</h2>
+
+      @if (errorMsg) {
+        <div class="alert alert-danger">{{ errorMsg }}</div>
+      }
+      @if (successMsg) {
+        <div class="alert alert-success">{{ successMsg }}</div>
+      }
+
+      <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+        <!-- Korisničko ime -->
+        <div class="mb-3">
+          <label for="username" class="form-label">Korisničko ime *</label>
+          <input
+            type="text"
+            class="form-control"
+            id="username"
+            name="username"
+            [(ngModel)]="username"
+            required
+          />
+        </div>
+
+        <!-- Email -->
+        <div class="mb-3">
+          <label for="email" class="form-label">Email *</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            name="email"
+            [(ngModel)]="email"
+            required
+          />
+        </div>
+
+        <!-- Lozinka -->
+        <div class="mb-3">
+          <label for="password" class="form-label">Lozinka *</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            name="password"
+            [(ngModel)]="password"
+            required
+          />
+          <small class="form-text text-muted">
+            Min. 8 karaktera, veliko slovo, malo slovo, broj i specijalan karakter
+          </small>
+        </div>
+
+        <!-- Potvrda lozinke -->
+        <div class="mb-3">
+          <label for="confirmPassword" class="form-label">Potvrdi lozinku *</label>
+          <input
+            type="password"
+            class="form-control"
+            id="confirmPassword"
+            name="confirmPassword"
+            [(ngModel)]="confirmPassword"
+            required
+          />
+        </div>
+
+        <!-- Rola -->
+        <div class="mb-3">
+          <label for="role" class="form-label">Tip korisnika</label>
+          <select class="form-select" id="role" name="role" [(ngModel)]="role">
+            <option value="turista">Turista</option>
+            <option value="vlasnik">Vlasnik vikendice</option>
+          </select>
+        </div>
+
+        <!-- Ime -->
+        <div class="mb-3">
+          <label for="name" class="form-label">Ime</label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            name="name"
+            [(ngModel)]="name"
+          />
+        </div>
+
+        <!-- Prezime -->
+        <div class="mb-3">
+          <label for="lastname" class="form-label">Prezime</label>
+          <input
+            type="text"
+            class="form-control"
+            id="lastname"
+            name="lastname"
+            [(ngModel)]="lastname"
+          />
+        </div>
+
+        <!-- Pol -->
+        <div class="mb-3">
+          <label for="gender" class="form-label">Pol</label>
+          <select class="form-select" id="gender" name="gender" [(ngModel)]="gender">
+            <option value="muški">Muški</option>
+            <option value="ženski">Ženski</option>
+          </select>
+        </div>
+
+        <!-- Adresa -->
+        <div class="mb-3">
+          <label for="address" class="form-label">Adresa</label>
+          <input
+            type="text"
+            class="form-control"
+            id="address"
+            name="address"
+            [(ngModel)]="address"
+          />
+        </div>
+
+        <!-- Telefon -->
+        <div class="mb-3">
+          <label for="phone" class="form-label">Telefon</label>
+          <input
+            type="tel"
+            class="form-control"
+            id="phone"
+            name="phone"
+            [(ngModel)]="phone"
+          />
+        </div>
+
+        <!-- Kreditna kartica -->
+        <div class="mb-3">
+          <label for="creditCard" class="form-label">Broj kreditne kartice</label>
+          <input
+            type="text"
+            class="form-control"
+            id="creditCard"
+            name="creditCard"
+            [(ngModel)]="creditCard"
+            placeholder="1234 5678 9012 3456"
+          />
+        </div>
+
+        <!-- Profilna slika -->
+        <div class="mb-3">
+          <label for="image" class="form-label">Profilna slika</label>
+          <input
+            type="file"
+            class="form-control"
+            id="image"
+            name="image"
+            accept="image/*"
+            (change)="onFileSelected($event)"
+          />
+          <small class="form-text text-muted">Opciono. Max 5MB.</small>
+        </div>
+
+        <!-- Dugme -->
+        <div class="d-grid">
+          <button type="submit" class="btn btn-primary" [disabled]="!registerForm.valid">
+            Registruj se
+          </button>
+        </div>
+
+        <div class="text-center mt-3">
+          <a routerLink="/login">Već imaš nalog? Prijavi se</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
