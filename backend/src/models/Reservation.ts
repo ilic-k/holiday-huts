@@ -11,6 +11,7 @@ const reservationSchema = new mongoose.Schema(
     adults: { type: Number, required: true, min: 1 },
     children: { type: Number, default: 0 },
 
+    description: { type: String, maxlength: 500 }, // Dodatni zahtevi turiste
     priceTotal: { type: Number, required: true },
 
     status: {

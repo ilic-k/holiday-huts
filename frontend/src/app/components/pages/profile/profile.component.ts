@@ -79,22 +79,48 @@ export class ProfileComponent {
     const file = input.files?.[0] || null;
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      this.errorMsg = 'Fajl mora biti slika';
+    // Provera tipa fajla
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!allowedTypes.includes(file.type)) {
+      this.errorMsg = 'Dozvoljeni su samo JPG i PNG formati';
       input.value = '';
       return;
     }
+
+    // Provera veličine fajla (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       this.errorMsg = 'Slika ne sme biti veća od 5MB';
       input.value = '';
       return;
     }
-    this.imageFile = file;
-    this.errorMsg = '';
 
-    // preview (nije obavezno)
+    // Provera dimenzija slike (min 100x100, max 300x300)
+    const img = new Image();
     const reader = new FileReader();
-    reader.onload = () => (this.imagePreview = String(reader.result));
+    
+    reader.onload = (e: any) => {
+      img.src = e.target.result;
+      
+      img.onload = () => {
+        if (img.width < 100 || img.height < 100) {
+          this.errorMsg = 'Slika mora biti najmanje 100x100 px';
+          input.value = '';
+          return;
+        }
+        
+        if (img.width > 300 || img.height > 300) {
+          this.errorMsg = 'Slika ne sme biti veća od 300x300 px';
+          input.value = '';
+          return;
+        }
+
+        // Sve je OK, postavi fajl i preview
+        this.imageFile = file;
+        this.imagePreview = e.target.result;
+        this.errorMsg = '';
+      };
+    };
+    
     reader.readAsDataURL(file);
   }
 
@@ -179,17 +205,26 @@ export class ProfileComponent {
       this.pwdMsg = 'Nove lozinke se ne poklapaju.';
       return;
     }
+    if (this.oldPassword === this.newPassword) {
+      this.pwdMsg = 'Stara i nova lozinka ne smeju biti iste.';
+      return;
+    }
     if (!PASS_RE.test(this.newPassword)) {
-      this.pwdMsg = 'Nova lozinka nije u traženom formatu.';
+      this.pwdMsg = 'Nova lozinka nije u traženom formatu (6-10 karaktera, počinje slovom, sadrži veliko slovo, 3+ mala slova, broj i specijalan karakter).';
       return;
     }
 
-    const id = this.user._id;
-    this.auth.changePassword({ userId: id, oldPassword: this.oldPassword, newPassword: this.newPassword })
+    const username = this.user.username;
+    this.auth.changePassword({ username, oldPassword: this.oldPassword, newPassword: this.newPassword })
       .subscribe({
         next: (res) => {
-          this.pwdMsg = res?.message || 'Lozinka je promenjena.';
+          this.pwdMsg = 'Lozinka je uspešno promenjena. Vraćamo Vas na stranicu za prijavljivanje...';
           this.oldPassword = this.newPassword = this.confirmPassword = '';
+          // Vrati korisnika na login nakon uspešne promene
+          setTimeout(() => {
+            this.auth.logout();
+            this.router.navigateByUrl('/login');
+          }, 2000);
         },
         error: (err) => this.pwdMsg = err?.error?.message || 'Greška pri promeni lozinke.'
       });

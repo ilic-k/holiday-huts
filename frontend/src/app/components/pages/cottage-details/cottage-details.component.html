@@ -32,9 +32,13 @@
 
         <!-- Opis i usluge -->
         <div class="card mb-3">
-          <div class="card-header"><strong>Usluge</strong></div>
+          <div class="card-header"><strong>Usluge koje vikendica nudi</strong></div>
           <div class="card-body">
-            <p>{{cottage.services || 'Nema dostupnih informacija o uslugama'}}</p>
+            @if (cottage.services) {
+              <p class="mb-0">{{cottage.services}}</p>
+            } @else {
+              <p class="text-muted mb-0">Nema dostupnih informacija o uslugama</p>
+            }
           </div>
         </div>
 
@@ -101,27 +105,77 @@
         <!-- Rezervacija forma -->
         @if (auth.hasRole('turista')) {
           <div class="card">
-            <div class="card-header bg-success text-white"><strong>Rezerviši</strong></div>
+            <div class="card-header bg-success text-white">
+              <strong>Rezerviši</strong>
+              <span class="float-end">Korak {{step}} od 2</span>
+            </div>
             <div class="card-body">
-              <form (ngSubmit)="reserve()">
-                <div class="mb-2">
-                  <label class="form-label">Datum dolaska</label>
-                  <input type="date" [(ngModel)]="startDate" name="startDate" class="form-control" required />
+              @if (reservationMsg) {
+                <div class="alert" [class.alert-success]="reservationMsg.includes('uspešno')" [class.alert-danger]="!reservationMsg.includes('uspešno')">
+                  {{reservationMsg}}
                 </div>
-                <div class="mb-2">
-                  <label class="form-label">Datum odlaska</label>
-                  <input type="date" [(ngModel)]="endDate" name="endDate" class="form-control" required />
+              }
+
+              <!-- STEP 1: Unos datuma i broja gostiju -->
+              @if (step === 1) {
+                <form (ngSubmit)="goToStep2()">
+                  <div class="mb-3">
+                    <label class="form-label">Datum dolaska</label>
+                    <input type="date" [(ngModel)]="startDate" name="startDate" class="form-control" required />
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Datum odlaska</label>
+                    <input type="date" [(ngModel)]="endDate" name="endDate" class="form-control" required />
+                  </div>
+                  <div class="row g-2 mb-3">
+                    <div class="col-6">
+                      <label class="form-label">Odrasli</label>
+                      <input type="number" [(ngModel)]="adults" name="adults" min="1" class="form-control" required />
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label">Deca</label>
+                      <input type="number" [(ngModel)]="children" name="children" min="0" class="form-control" />
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-success w-100">Nastavi na plaćanje →</button>
+                </form>
+              }
+
+              <!-- STEP 2: Pregled i plaćanje -->
+              @if (step === 2) {
+                <div class="mb-3">
+                  <h6 class="text-muted">Pregled rezervacije</h6>
+                  <ul class="list-unstyled">
+                    <li><strong>Vikendica:</strong> {{cottage.title}}</li>
+                    <li><strong>Dolazak:</strong> {{startDate | date:'dd.MM.yyyy'}}</li>
+                    <li><strong>Odlazak:</strong> {{endDate | date:'dd.MM.yyyy'}}</li>
+                    <li><strong>Broj noćenja:</strong> {{nights}}</li>
+                    <li><strong>Odrasli:</strong> {{adults}}, <strong>Deca:</strong> {{children}}</li>
+                  </ul>
                 </div>
-                <div class="mb-2">
-                  <label class="form-label">Odrasli</label>
-                  <input type="number" [(ngModel)]="adults" name="adults" min="1" class="form-control" required />
+
+                <div class="mb-3">
+                  <label class="form-label">Kreditna kartica</label>
+                  <input type="text" [(ngModel)]="creditCard" name="creditCard" class="form-control" placeholder="**** **** **** 1234" required />
+                  <small class="text-muted">Vaša kartica je automatski popunjena, možete je promeniti</small>
                 </div>
-                <div class="mb-2">
-                  <label class="form-label">Deca</label>
-                  <input type="number" [(ngModel)]="children" name="children" min="0" class="form-control" />
+
+                <div class="mb-3">
+                  <label class="form-label">Ukupna cena</label>
+                  <input type="text" [value]="totalPrice + ' EUR'" class="form-control" disabled />
                 </div>
-                <button type="submit" class="btn btn-success w-100">Rezerviši</button>
-              </form>
+
+                <div class="mb-3">
+                  <label class="form-label">Dodatni zahtevi (opciono)</label>
+                  <textarea [(ngModel)]="description" name="description" class="form-control" rows="3" maxlength="500" placeholder="Unesite dodatne zahteve (max 500 karaktera)"></textarea>
+                  <small class="text-muted">{{description.length || 0}}/500 karaktera</small>
+                </div>
+
+                <div class="d-flex gap-2">
+                  <button type="button" (click)="backToStep1()" class="btn btn-outline-secondary flex-fill">← Nazad</button>
+                  <button type="button" (click)="confirmReservation()" class="btn btn-success flex-fill">Potvrdi rezervaciju</button>
+                </div>
+              }
             </div>
           </div>
         } @else {

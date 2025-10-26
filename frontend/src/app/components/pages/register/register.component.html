@@ -77,86 +77,114 @@
 
         <!-- Ime -->
         <div class="mb-3">
-          <label for="name" class="form-label">Ime</label>
+          <label for="name" class="form-label">Ime *</label>
           <input
             type="text"
             class="form-control"
             id="name"
             name="name"
             [(ngModel)]="name"
+            required
           />
         </div>
 
         <!-- Prezime -->
         <div class="mb-3">
-          <label for="lastname" class="form-label">Prezime</label>
+          <label for="lastname" class="form-label">Prezime *</label>
           <input
             type="text"
             class="form-control"
             id="lastname"
             name="lastname"
             [(ngModel)]="lastname"
+            required
           />
         </div>
 
         <!-- Pol -->
         <div class="mb-3">
-          <label for="gender" class="form-label">Pol</label>
-          <select class="form-select" id="gender" name="gender" [(ngModel)]="gender">
-            <option value="muški">Muški</option>
-            <option value="ženski">Ženski</option>
+          <label for="gender" class="form-label">Pol *</label>
+          <select class="form-select" id="gender" name="gender" [(ngModel)]="gender" required>
+            <option value="M">Muški (M)</option>
+            <option value="Z">Ženski (Ž)</option>
           </select>
         </div>
 
         <!-- Adresa -->
         <div class="mb-3">
-          <label for="address" class="form-label">Adresa</label>
+          <label for="address" class="form-label">Adresa *</label>
           <input
             type="text"
             class="form-control"
             id="address"
             name="address"
             [(ngModel)]="address"
+            required
           />
         </div>
 
         <!-- Telefon -->
         <div class="mb-3">
-          <label for="phone" class="form-label">Telefon</label>
+          <label for="phone" class="form-label">Kontakt telefon *</label>
           <input
             type="tel"
             class="form-control"
             id="phone"
             name="phone"
             [(ngModel)]="phone"
+            placeholder="+381 11 123 4567"
+            required
           />
         </div>
 
         <!-- Kreditna kartica -->
         <div class="mb-3">
-          <label for="creditCard" class="form-label">Broj kreditne kartice</label>
-          <input
-            type="text"
-            class="form-control"
-            id="creditCard"
-            name="creditCard"
-            [(ngModel)]="creditCard"
-            placeholder="1234 5678 9012 3456"
-          />
+          <label for="creditCard" class="form-label">Broj kreditne kartice *</label>
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control"
+              id="creditCard"
+              name="creditCard"
+              [(ngModel)]="creditCard"
+              (input)="onCreditCardInput()"
+              placeholder="300012345678901"
+              maxlength="16"
+              required
+            />
+            @if (cardType) {
+              <span class="input-group-text card-icon">
+                @if (cardType === 'diners') {
+                  <img src="/assets/cards/diners.svg" alt="Diners" style="height: 24px;" title="Diners Club" />
+                }
+                @if (cardType === 'mastercard') {
+                  <img src="/assets/cards/mastercard.svg" alt="MasterCard" style="height: 24px;" title="MasterCard" />
+                }
+                @if (cardType === 'visa') {
+                  <img src="/assets/cards/visa.svg" alt="Visa" style="height: 24px;" title="Visa" />
+                }
+              </span>
+            }
+          </div>
+          <small class="form-text text-muted">
+            Podržani tipovi: Diners (15 cifara), MasterCard (16 cifara), Visa (16 cifara)
+          </small>
         </div>
 
         <!-- Profilna slika -->
         <div class="mb-3">
-          <label for="image" class="form-label">Profilna slika</label>
+          <label for="image" class="form-label">Profilna slika (opciono)</label>
           <input
             type="file"
             class="form-control"
             id="image"
             name="image"
-            accept="image/*"
+            accept="image/jpeg,image/jpg,image/png"
             (change)="onFileSelected($event)"
           />
-          <small class="form-text text-muted">Opciono. Max 5MB.</small>
+          <small class="form-text text-muted">
+            JPG/PNG format, 100x100 px do 300x300 px, max 5MB. Ako ne dodate sliku, dobićete podrazumevanu.
+          </small>
         </div>
 
         <!-- Dugme -->

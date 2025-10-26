@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { LoginComponent } from './components/pages/login/login.component';
 import { RegisterComponent } from './components/pages/register/register.component';
+import { AdminLoginComponent } from './components/pages/admin-login/admin-login.component';
 import { CottagesListComponent } from './components/pages/cottages-list/cottages-list.component';
 import { CottageDetailsComponent } from './components/pages/cottage-details/cottage-details.component';
 import { ProfileComponent } from './components/pages/profile/profile.component';
@@ -13,6 +14,9 @@ export const routes: Routes = [
   // AUTH
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  
+  // ADMIN AUTH (posebna ruta - nije javno vidljiva)
+  { path: 'sys/admin/login', component: AdminLoginComponent },
 
   // PUBLIC
   { path: 'cottages', component: CottagesListComponent },

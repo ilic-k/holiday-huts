@@ -7,5 +7,8 @@ export class User {
   role: Role = 'turista';
   name = '';
   lastname = '';
+  address = '';
+  phone = '';
+  creditCard = '';
   image = '';
 }

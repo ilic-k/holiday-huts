@@ -28,7 +28,7 @@ export class ReservationController {
     next: NextFunction
   ) => {
     try {
-      const { cottageId, touristId, startDate, endDate, adults, children = 0 } =
+      const { cottageId, touristId, startDate, endDate, adults, children = 0, description = '' } =
         req.body;
 
       if (!cottageId || !touristId || !startDate || !endDate || !adults) {
@@ -97,6 +97,14 @@ export class ReservationController {
         return;
       }
 
+      // Validacija description
+      if (description && description.length > 500) {
+        res.status(400).json({
+          message: "Opis dodatnih zahteva ne može biti duži od 500 karaktera.",
+        });
+        return;
+      }
+
             // izračunaj cenu po danima (leto/zima)
       const priceTotal = calcPrice(startDate, endDate, {
         summer: cottage.pricing?.summer ?? 0,
@@ -110,6 +118,7 @@ export class ReservationController {
         endDate: end,
         adults,
         children,
+        description: description?.trim() || '',
         priceTotal: priceTotal,
         status: "pending",
         comments: "",

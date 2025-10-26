@@ -29,9 +29,9 @@ export class AdminController {
     next: NextFunction
   ) => {
     try {
-      const userId = req.params;
+      const { id } = req.params;
       const user = await User.findByIdAndUpdate(
-        userId,
+        id,
         { approved: true },
         { new: true }
       ).select("-passwordHash -__v");
@@ -51,8 +51,8 @@ export class AdminController {
     next: NextFunction
   ) => {
     try {
-      const userId = req.params;
-      const user = await User.findById(userId);
+      const { id } = req.params;
+      const user = await User.findById(id);
       if (!user) {
         res.status(404).json({ message: "Korisnik nije pronađen" });
         return;
@@ -73,6 +73,8 @@ export class AdminController {
 
       // sada ga obriši iz glavne kolekcije
       await user.deleteOne();
+      
+      res.status(200).json({ message: "Korisnik uspešno odbijen" });
     } catch (error) {
       next(error);
     }

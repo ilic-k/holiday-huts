@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="32" viewBox="0 0 48 32">
+  <rect width="48" height="32" rx="4" fill="#0079BE"/>
+  <text x="24" y="20" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">DINERS</text>
+  <circle cx="16" cy="10" r="6" fill="white" opacity="0.3"/>
+  <circle cx="22" cy="10" r="6" fill="white" opacity="0.3"/>
+</svg>

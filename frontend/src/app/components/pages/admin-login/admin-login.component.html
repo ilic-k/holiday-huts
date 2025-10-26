@@ -1,0 +1,63 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-4">
+      <div class="text-center mb-4">
+        <div class="admin-badge mb-3">
+          🔐 ADMIN
+        </div>
+        <h2>Administratorska Prijava</h2>
+        <p class="text-muted small">Samo za administratore sistema</p>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <form (ngSubmit)="submit()" class="d-flex flex-column gap-3">
+            <div>
+              <label class="form-label">Korisničko ime</label>
+              <input
+                [(ngModel)]="username"
+                name="username"
+                class="form-control"
+                placeholder="admin"
+                required
+                autocomplete="username"/>
+            </div>
+
+            <div>
+              <label class="form-label">Lozinka</label>
+              <input
+                [(ngModel)]="password"
+                name="password"
+                class="form-control"
+                type="password"
+                placeholder="••••••••"
+                required
+                autocomplete="current-password"/>
+            </div>
+
+            <button class="btn btn-danger w-100" [disabled]="loading">
+              @if (loading) { 
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                Učitavanje… 
+              } @else { 
+                🔐 Prijavi se kao Admin
+              }
+            </button>
+
+            @if (errorMsg) {
+              <div class="alert alert-danger mb-0">
+                <strong>⚠️ Greška:</strong> {{ errorMsg }}
+              </div>
+            }
+          </form>
+        </div>
+      </div>
+
+      <div class="text-center mt-3">
+        <p class="text-muted small">
+          ⚠️ Pristup ovoj stranici je ograničen samo na administratore sistema.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

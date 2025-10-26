@@ -118,6 +118,12 @@ export class AuthController {
         return;
       }
 
+      // Validacija formata nove lozinke
+      if (!PASS_RE.test(newPassword)) {
+        res.status(400).json({ message: 'Nova lozinka nije u traženom formatu (6-10 karaktera, počinje slovom, sadrži veliko slovo, 3+ mala slova, broj i specijalan karakter)' });
+        return;
+      }
+
       const user = await User.findOne({ username });
       if (!user) {
         res.status(404).json({ message: 'Korisnik ne postoji' });

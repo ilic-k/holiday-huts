@@ -1,17 +1,17 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { User } from '../../../models/user.model';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-admin-login',
   standalone: true,
-  imports: [FormsModule, RouterLink],
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'] // opciono, možeš obrisati ako ne koristiš
+  imports: [FormsModule],
+  templateUrl: './admin-login.component.html',
+  styleUrls: ['./admin-login.component.css']
 })
-export class LoginComponent {
+export class AdminLoginComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
 
@@ -29,15 +29,17 @@ export class LoginComponent {
     this.auth.login({ username: this.username, password: this.password }).subscribe({
       next: (res) => {
         const u = Object.assign(new User(), res.user);
-        this.auth.setUser(u);
-        // Preusmeri turiste na profil, vlasnike na profil (ili my-cottages ako želiš)
-        if (u.role === 'turista') {
-          this.router.navigateByUrl('/me');
-        } else if (u.role === 'vlasnik') {
-          this.router.navigateByUrl('/me'); // ili '/owner/cottages' ako želiš
-        } else {
-          this.router.navigateByUrl('/cottages');
+        
+        // Validacija da je korisnik admin
+        if (u.role !== 'admin') {
+          this.errorMsg = 'Nemate administratorska prava. Ova forma je samo za administratore.';
+          this.loading = false;
+          this.auth.logout(); // Odjavi korisnika
+          return;
         }
+
+        this.auth.setUser(u);
+        this.router.navigateByUrl('/admin/cottages');
       },
       error: (err) => {
         this.errorMsg = err?.error?.message || 'Greška pri prijavi';

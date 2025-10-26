@@ -48,7 +48,7 @@ export class AuthService {
     return this.http.patch<any>(`${environment.apiBaseUrl}/user/${username}`, body);
   }
 
-  changePassword(body: { userId: string; oldPassword: string; newPassword: string }) {
-    return this.http.patch<{ message: string }>(`${environment.apiBaseUrl}/auth/change-password`, body);
+  changePassword(body: { username: string; oldPassword: string; newPassword: string }) {
+    return this.http.post<{ message: string }>(`${environment.apiBaseUrl}/auth/change-password`, body);
   }
 }
