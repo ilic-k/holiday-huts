@@ -1,95 +1,142 @@
 <div class="container mt-4">
   <h2 class="mb-4">Moje rezervacije</h2>
 
-  <div class="table-responsive">
-    <table class="table table-hover">
+  <!-- TABELA 1: Trenutna zakazivanja (aktuelne rezervacije) -->
+  <h4 class="mb-3">Trenutna zakazivanja</h4>
+  <div class="table-responsive mb-5">
+    <table class="table table-hover table-bordered">
       <thead class="table-light">
         <tr>
+          <th>Datum početka</th>
+          <th>Datum kraja</th>
           <th>Vikendica</th>
-          <th>Period</th>
-          <th>Osobe</th>
-          <th>Cena</th>
-          <th>Status</th>
+          <th>Mesto</th>
           <th>Akcije</th>
         </tr>
       </thead>
       <tbody>
-        @for (r of reservations; track r._id) {
+        @for (r of currentReservations; track r._id) {
           <tr>
+            <td>{{r.startDate | date:'dd.MM.yyyy'}}</td>
+            <td>{{r.endDate | date:'dd.MM.yyyy'}}</td>
             <td>
               @if (r.cottage?.title) {
-                <strong>{{r.cottage.title}}</strong><br>
-                <small class="text-muted">{{r.cottage.place}}</small>
+                <strong>{{r.cottage.title}}</strong>
+              } @else {
+                <span class="text-muted">-</span>
+              }
+            </td>
+            <td>{{r.cottage?.place || '-'}}</td>
+            <td>
+              @if (canCancel(r)) {
+                <button (click)="cancelReservation(r._id)" class="btn btn-sm btn-danger">
+                  Otkaži
+                </button>
+              } @else {
+                <small class="text-muted">Ne može se otkazati</small>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5" class="text-center text-muted py-4">
+              Nemate trenutnih zakazivanja
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TABELA 2: Arhiva (prethodne rezervacije) -->
+  <h4 class="mb-3">Arhiva zakazivanja</h4>
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th>Datum početka</th>
+          <th>Vikendica</th>
+          <th>Status</th>
+          <th>Ocena</th>
+          <th>Komentar</th>
+          <th>Akcije</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of pastReservations; track r._id) {
+          <tr>
+            <td>{{r.startDate | date:'dd.MM.yyyy'}}</td>
+            <td>
+              @if (r.cottage?.title) {
+                <strong>{{r.cottage.title}}</strong>
               } @else {
                 <span class="text-muted">-</span>
               }
             </td>
             <td>
-              {{r.startDate | date:'dd.MM.yyyy'}} – {{r.endDate | date:'dd.MM.yyyy'}}
-            </td>
-            <td>
-              {{r.adults}} odraslih
-              @if (r.children > 0) {
-                <br><small>{{r.children}} dece</small>
-              }
-            </td>
-            <td>{{r.priceTotal}} EUR</td>
-            <td>
               <span class="badge {{getStatusBadgeClass(r.status)}}">
                 {{getStatusText(r.status)}}
               </span>
-              @if (r.ownerNote) {
-                <br><small class="text-muted">Napomena: {{r.ownerNote}}</small>
+            </td>
+            <td>
+              @if (r.rating) {
+                <span class="text-warning">{{ getStars(r.rating) }}</span>
+                <small class="text-muted">({{r.rating}}/5)</small>
+              } @else {
+                <span class="text-muted">-</span>
               }
             </td>
             <td>
-              <!-- Otkaži dugme -->
-              @if (canCancel(r)) {
-                <button (click)="cancelReservation(r._id)" class="btn btn-sm btn-danger mb-1">
-                  Otkaži
-                </button>
+              @if (r.comment) {
+                <small>{{r.comment}}</small>
+              } @else {
+                <span class="text-muted">-</span>
               }
-
-              <!-- Ostavi ocenu dugme -->
+            </td>
+            <td>
+              <!-- Dugme za ostavljanje ocene -->
               @if (canReview(r) && reviewingId !== r._id) {
-                <button (click)="startReview(r._id)" class="btn btn-sm btn-primary mb-1">
+                <button (click)="startReview(r._id)" class="btn btn-sm btn-primary">
                   Ostavi ocenu
                 </button>
               }
 
               <!-- Forma za ocenu (inline) -->
               @if (reviewingId === r._id) {
-                <div class="border p-2 bg-light">
-                  <div class="mb-2">
-                    <label class="form-label small">Ocena (1-5):</label>
-                    <select [(ngModel)]="reviewRating" class="form-select form-select-sm">
-                      <option [value]="1">1 - Veoma loše</option>
-                      <option [value]="2">2 - Loše</option>
-                      <option [value]="3">3 - Prosečno</option>
-                      <option [value]="4">4 - Dobro</option>
-                      <option [value]="5">5 - Odlično</option>
-                    </select>
+                <div class="border p-3 bg-light">
+                  <h6 class="mb-3">Ocena i komentar</h6>
+                  
+                  <div class="mb-3">
+                    <label class="form-label">Ocena (1-5 zvezdica):</label>
+                    <div class="btn-group d-block" role="group">
+                      @for (star of [1, 2, 3, 4, 5]; track star) {
+                        <button 
+                          type="button" 
+                          (click)="reviewRating = star"
+                          [class.active]="reviewRating >= star"
+                          class="btn btn-outline-warning"
+                          style="font-size: 1.5rem;">
+                          {{ reviewRating >= star ? '★' : '☆' }}
+                        </button>
+                      }
+                    </div>
                   </div>
-                  <div class="mb-2">
-                    <label class="form-label small">Komentar:</label>
-                    <textarea [(ngModel)]="reviewComment" 
-                              class="form-control form-control-sm" 
-                              rows="3"
-                              maxlength="500"
-                              placeholder="Vaše iskustvo..."></textarea>
-                  </div>
-                  <button (click)="submitReview()" class="btn btn-sm btn-success me-1">Pošalji</button>
-                  <button (click)="cancelReview()" class="btn btn-sm btn-secondary">Otkaži</button>
-                </div>
-              }
 
-              <!-- Prikaz ocene ako je već ostavljena -->
-              @if (r.rating) {
-                <div class="text-muted small">
-                  <strong>Vaša ocena:</strong> {{r.rating}}/5
-                  @if (r.comment) {
-                    <br>"{{r.comment}}"
-                  }
+                  <div class="mb-3">
+                    <label class="form-label">Komentar:</label>
+                    <textarea 
+                      [(ngModel)]="reviewComment" 
+                      class="form-control" 
+                      rows="4"
+                      maxlength="500"
+                      placeholder="Podelite Vaše iskustvo sa ostalim turistima..."></textarea>
+                    <small class="text-muted">{{reviewComment.length}}/500 karaktera</small>
+                  </div>
+
+                  <div class="d-flex gap-2">
+                    <button (click)="submitReview()" class="btn btn-success">Pošalji ocenu</button>
+                    <button (click)="cancelReview()" class="btn btn-secondary">Otkaži</button>
+                  </div>
                 </div>
               }
             </td>
@@ -97,7 +144,7 @@
         } @empty {
           <tr>
             <td colspan="6" class="text-center text-muted py-4">
-              Nemate nijednu rezervaciju
+              Nemate prethodnih zakazivanja
             </td>
           </tr>
         }

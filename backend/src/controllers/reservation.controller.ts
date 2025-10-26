@@ -137,6 +137,17 @@ export class ReservationController {
 
   getMine: RequestHandler = async (req, res, next) => {
     try {
+      // Prvo ažuriraj sve approved rezervacije čiji je endDate prošao na 'completed'
+      const now = new Date();
+      await Reservation.updateMany(
+        {
+          tourist: req.params.touristId,
+          status: 'approved',
+          endDate: { $lt: now }
+        },
+        { $set: { status: 'completed' } }
+      );
+
       const data = await Reservation.find({ tourist: req.params.touristId })
         .sort({ startDate: -1 })
         .populate("cottage", "title place images");
@@ -235,7 +246,7 @@ leaveReview: RequestHandler = async (req, res, next) => {
 
     const now = new Date();
     const eligible =
-      (reservation.status === 'approved' || reservation.status === 'finished') &&
+      (reservation.status === 'approved' || reservation.status === 'completed' || reservation.status === 'finished') &&
       reservation.endDate < now &&
       reservation.rating == null && reservation.comment == null;  // još nije ocenjena
 
