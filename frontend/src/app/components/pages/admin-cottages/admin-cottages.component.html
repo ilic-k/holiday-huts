@@ -1,1 +1,124 @@
-<p>admin-cottages works!</p>
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <h2>Kontrola Kvaliteta Vikendica</h2>
+      <hr>
+    </div>
+  </div>
+
+  <!-- Filteri -->
+  <div class="row mb-3">
+    <div class="col-md-5">
+      <input 
+        type="text" 
+        class="form-control" 
+        [(ngModel)]="searchText" 
+        (ngModelChange)="applyFilters()"
+        placeholder="🔍 Pretraži po nazivu...">
+    </div>
+    <div class="col-md-5">
+      <input 
+        type="text" 
+        class="form-control" 
+        [(ngModel)]="searchPlace" 
+        (ngModelChange)="applyFilters()"
+        placeholder="📍 Pretraži po mestu...">
+    </div>
+    <div class="col-md-2">
+      <button class="btn btn-secondary w-100" (click)="loadCottages()">
+        ↻ Osveži
+      </button>
+    </div>
+  </div>
+
+  <!-- Alert za objašnjenje -->
+  <div class="alert alert-info">
+    <strong>ℹ️ Napomena:</strong> Redovi sa <span class="badge bg-danger">crvenim pozadinom</span> 
+    označavaju vikendice koje su dobile <strong>3 uzastopne ocene niže od 2</strong> u poslednjim rezervacijama.
+  </div>
+
+  <!-- Tabela vikendica -->
+  <div class="table-responsive">
+    @if (filteredCottages.length === 0) {
+      <div class="alert alert-warning">
+        @if (searchText || searchPlace) {
+          Nema rezultata za zadatu pretragu.
+        } @else {
+          Nema vikendica u sistemu.
+        }
+      </div>
+    } @else {
+      <table class="table table-bordered table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>Naziv</th>
+            <th>Mesto</th>
+            <th>Vlasnik</th>
+            <th>Prosečna Ocena</th>
+            <th>Broj Ocena</th>
+            <th>Blokirana Do</th>
+            <th>Akcije</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (cottage of filteredCottages; track cottage._id) {
+            <tr [class.table-danger]="shouldHighlight(cottage)">
+              <td>
+                {{ cottage.title }}
+                @if (shouldHighlight(cottage)) {
+                  <span class="badge bg-danger ms-2">
+                    ⚠️ Niski rejting
+                  </span>
+                }
+              </td>
+              <td>{{ cottage.place }}</td>
+              <td>
+                @if (cottage.owner) {
+                  {{ cottage.owner.username || cottage.owner.email }}
+                } @else {
+                  <span class="text-muted">-</span>
+                }
+              </td>
+              <td>
+                @if (cottage.ratingAvg) {
+                  {{ cottage.ratingAvg.toFixed(2) }} ⭐
+                } @else {
+                  <span class="text-muted">Nema ocena</span>
+                }
+              </td>
+              <td>{{ cottage.ratingCount || 0 }}</td>
+              <td>
+                @if (isBlocked(cottage)) {
+                  <span class="badge bg-warning text-dark">
+                    {{ cottage.blockedUntil | date:'dd.MM.yyyy HH:mm' }}
+                  </span>
+                } @else {
+                  <span class="text-muted">-</span>
+                }
+              </td>
+              <td>
+                @if (!isBlocked(cottage)) {
+                  <button 
+                    class="btn btn-sm btn-danger"
+                    (click)="blockCottage(cottage)">
+                    🔒 Blokiraj 48h
+                  </button>
+                } @else {
+                  <span class="badge bg-secondary">Blokirana</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  <!-- Footer info -->
+  <div class="mt-3">
+    <p class="text-muted">
+      Ukupno vikendica: <strong>{{ cottages.length }}</strong> | 
+      Prikazano: <strong>{{ filteredCottages.length }}</strong>
+    </p>
+  </div>
+</div>

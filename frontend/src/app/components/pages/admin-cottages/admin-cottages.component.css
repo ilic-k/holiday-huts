@@ -1,0 +1,19 @@
+.table-danger {
+  background-color: #f8d7da !important;
+}
+
+.table-danger:hover {
+  background-color: #f5c2c7 !important;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+.badge {
+  font-size: 0.85rem;
+}
+
+.alert-info {
+  border-left: 4px solid #0dcaf0;
+}

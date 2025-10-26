@@ -2,7 +2,6 @@ import { RequestHandler, Request, Response, NextFunction } from "express";
 import User from "../models/User";
 import RejectedUser from "../models/RejectedUser";
 import Cottage from "../models/Cottage";
-import mongoose from "mongoose";
 import Reservation from "../models/Reservation";
 
 const add48h = () => new Date(Date.now() + 48 * 60 * 60 * 1000);
@@ -85,9 +84,9 @@ export class AdminController {
     next: NextFunction
   ) => {
     try {
-      const cottageId = req.params;
+      const { id } = req.params;
       const cottage = await Cottage.findByIdAndUpdate(
-        cottageId,
+        id,
         { blockedUntil: add48h() },
         { new: true }
       );
