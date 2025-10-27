@@ -195,8 +195,8 @@ async function runSeed() {
       coords: { lat: 44.0961, lng: 20.0214 },
       images: [],
       owner: owner1._id,
-      ratingAvg: 3.2,
-      ratingCount: 5
+      ratingAvg: 1.0, // 3 ocene sa vrednostima 1, 1, 1 -> avg = 1.0
+      ratingCount: 3
     });
 
     const cottage4 = await Cottage.create({
@@ -478,60 +478,33 @@ async function runSeed() {
     });
     // cottage4: (5+5+5+4) = 19/4 = 4.75 (close to 4.9, može se dodati još)
 
-    // 2n-2p. Finished za cottage3 (Divčibare) - avg 3.2
+    // 2n-2p. Finished za cottage3 (Divčibare) - LOŠE OCENE (3 uzastopne < 2)
+    // Poslednje 3 rezervacije imaju ocene 1, 1, 1 -> CRVENA u admin panelu!
     await Reservation.create({
       cottage: cottage3._id,
       tourist: tourist1._id,
-      startDate: new Date('2024-05-01'),
-      endDate: new Date('2024-05-04'),
-      adults: 2,
-      children: 0,
-      priceTotal: 180,
-      status: 'finished',
-      rating: 3,
-      comment: '',
-      ownerNote: ''
-    });
-
-    await Reservation.create({
-      cottage: cottage3._id,
-      tourist: tourist2._id,
       startDate: new Date('2024-06-10'),
       endDate: new Date('2024-06-13'),
       adults: 2,
       children: 1,
       priceTotal: 180,
       status: 'finished',
-      rating: 4,
-      comment: '',
-      ownerNote: ''
-    });
-
-    await Reservation.create({
-      cottage: cottage3._id,
-      tourist: tourist1._id,
-      startDate: new Date('2024-07-15'),
-      endDate: new Date('2024-07-18'),
-      adults: 3,
-      children: 0,
-      priceTotal: 180,
-      status: 'finished',
-      rating: 3,
-      comment: '',
+      rating: 1,
+      comment: 'Prljavo, vlasnik neodgovoran. Ne preporučujem!',
       ownerNote: ''
     });
 
     await Reservation.create({
       cottage: cottage3._id,
       tourist: tourist2._id,
-      startDate: new Date('2024-08-01'),
-      endDate: new Date('2024-08-04'),
-      adults: 2,
+      startDate: new Date('2024-07-15'),
+      endDate: new Date('2024-07-18'),
+      adults: 3,
       children: 0,
       priceTotal: 180,
       status: 'finished',
-      rating: 3,
-      comment: '',
+      rating: 1,
+      comment: 'Loš kvalitet, hladno u kući. Razočarenje.',
       ownerNote: ''
     });
 
@@ -544,11 +517,11 @@ async function runSeed() {
       children: 1,
       priceTotal: 180,
       status: 'finished',
-      rating: 3,
-      comment: '',
+      rating: 1,
+      comment: 'Užasno iskustvo. Ne odgovara slikama.',
       ownerNote: ''
     });
-    // cottage3: (3+4+3+3+3) = 16/5 = 3.2 ✓
+    // cottage3: (1+1+1) = 3/3 = 1.0 avg, lowCount = 3 -> CRVENA BOJA! ✓
 
 
     // 3. Završena rezervacija BEZ ocene (completed - može ostaviti review)
@@ -753,8 +726,8 @@ async function runSeed() {
     console.log('  - Rating averages match actual finished reservations:');
     console.log('    * Cottage1 (Tara): 4.5 avg from 8 reviews');
     console.log('    * Cottage2 (Zlatibor): 4.8 avg from 5 reviews');
-    console.log('    * Cottage3 (Divčibare): 3.2 avg from 5 reviews');
-    console.log('    * Cottage4 (Kopaonik): ~4.75 avg from 4 reviews');;
+    console.log('    * Cottage3 (Divčibare): 1.0 avg from 3 reviews - CRVENA u admin panelu! ⚠️');
+    console.log('    * Cottage4 (Kopaonik): ~4.75 avg from 4 reviews');
 
     await mongoose.disconnect();
   } catch (err) {
