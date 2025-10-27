@@ -5,7 +5,8 @@
   "scripts": {
     "start": "npm run serve",
     "serve": "node dist/server.js",
-    "build": "tsc"
+    "build": "tsc",
+    "seed": "node dist/seed.js"
   },
   "author": "",
   "license": "ISC",

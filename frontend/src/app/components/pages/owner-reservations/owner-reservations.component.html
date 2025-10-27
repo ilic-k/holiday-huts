@@ -1,0 +1,100 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Rezervacije za moje vikendice</h2>
+
+  <!-- TABELA: Neobrasene rezervacije (pending) -->
+  <h4 class="mb-3">Neobrasene rezervacije</h4>
+  <div class="table-responsive mb-5">
+    <table class="table table-hover table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th>Datum početka</th>
+          <th>Datum kraja</th>
+          <th>Vikendica</th>
+          <th>Turista</th>
+          <th>Osobe</th>
+          <th>Dodatni zahtevi</th>
+          <th>Akcije</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of pendingReservations; track r._id) {
+          <tr>
+            <td>{{r.startDate | date:'dd.MM.yyyy'}}</td>
+            <td>{{r.endDate | date:'dd.MM.yyyy'}}</td>
+            <td>
+              @if (r.cottage?.title) {
+                <strong>{{r.cottage.title}}</strong><br>
+                <small class="text-muted">{{r.cottage.place}}</small>
+              } @else {
+                <span class="text-muted">-</span>
+              }
+            </td>
+            <td>
+              @if (r.tourist?.username) {
+                {{r.tourist.username}}<br>
+                <small class="text-muted">{{r.tourist.email}}</small>
+              } @else {
+                <span class="text-muted">-</span>
+              }
+            </td>
+            <td>
+              {{r.adults}} odraslih
+              @if (r.children > 0) {
+                <br><small>{{r.children}} dece</small>
+              }
+            </td>
+            <td>
+              @if (r.description) {
+                <small>{{r.description}}</small>
+              } @else {
+                <span class="text-muted">-</span>
+              }
+            </td>
+            <td>
+              @if (rejectingId !== r._id) {
+                <div class="d-flex gap-2">
+                  <button (click)="approveReservation(r._id)" class="btn btn-sm btn-success">
+                    Odobri
+                  </button>
+                  <button (click)="startReject(r._id)" class="btn btn-sm btn-danger">
+                    Odbij
+                  </button>
+                </div>
+              }
+
+              <!-- Forma za odbijanje (inline) -->
+              @if (rejectingId === r._id) {
+                <div class="border p-3 bg-light">
+                  <h6 class="mb-3">Razlog odbijanja</h6>
+                  
+                  <div class="mb-3">
+                    <label class="form-label">Napomena za turista (obavezno):</label>
+                    <textarea 
+                      [(ngModel)]="rejectNote" 
+                      class="form-control" 
+                      rows="3"
+                      maxlength="500"
+                      placeholder="Unesite razlog odbijanja rezervacije..."
+                      required></textarea>
+                    <small class="text-muted">{{rejectNote.length}}/500 karaktera</small>
+                  </div>
+
+                  <div class="d-flex gap-2">
+                    <button (click)="confirmReject()" class="btn btn-danger">Potvrdi odbijanje</button>
+                    <button (click)="cancelReject()" class="btn btn-secondary">Otkaži</button>
+                  </div>
+                </div>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7" class="text-center text-muted py-4">
+              Nemate neobrasenih rezervacija
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -17,7 +17,8 @@ export class HeaderComponent {
 
   logout() {
     this.auth.logout();
-    this.router.navigateByUrl('/cottages');
+    // Vodi na login ekran nakon logout-a
+    this.router.navigateByUrl('/login');
   }
 
   getUserImageUrl(): string {

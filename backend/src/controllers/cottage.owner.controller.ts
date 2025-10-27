@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import mongoose from 'mongoose';
+import fs from 'fs';
+import path from 'path';
 import Cottage from '../models/Cottage';
 import Reservation from '../models/Reservation';
 
@@ -16,6 +18,7 @@ export class CottageOwnerController {
         res.status(400).json({ message: 'Nevalidan ownerId.' }); return;
       }
 
+      // Kreiraj vikendicu prvo bez slika
       const doc = await Cottage.create({
         owner: ownerId,
         title,
@@ -33,6 +36,31 @@ export class CottageOwnerController {
         ratingAvg: 0,
         ratingCount: 0,
       });
+
+      // Preimenuj folder iz privremenog u stvarni cottageId i ažuriraj putanje
+      const images: string[] = [];
+      if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+        const tempDir = (req as any).tempCottageDir;
+        if (tempDir) {
+          const oldDir = path.join('uploads', 'cottages', tempDir);
+          const newDir = path.join('uploads', 'cottages', doc._id.toString());
+          
+          // Preimenuj folder
+          if (fs.existsSync(oldDir)) {
+            fs.renameSync(oldDir, newDir);
+            
+            // Ažuriraj putanje slika - normalizuj sa /
+            req.files.forEach((file: any) => {
+              const newPath = file.path.replace(tempDir, doc._id.toString()).replace(/\\/g, '/');
+              images.push(newPath);
+            });
+            
+            // Ažuriraj dokument sa slikama
+            doc.images = images;
+            await doc.save();
+          }
+        }
+      }
 
       res.status(201).json({ message: 'Vikendica kreirana', data: doc });
     } catch (err) { next(err); }
@@ -60,6 +88,22 @@ export class CottageOwnerController {
         const { lat, lng } = update.coords;
         if (lat != null && lng != null) update.coords = { lat: Number(lat), lng: Number(lng) };
         else delete update.coords;
+      }
+
+      // Dodaj nove slike ako su uploadovane
+      if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+        const newImages: string[] = [];
+        req.files.forEach((file: any) => {
+          // Normalizuj putanju da koristi / umesto \
+          const normalizedPath = file.path.replace(/\\/g, '/');
+          newImages.push(normalizedPath);
+        });
+        
+        // Preuzmi postojeće slike i dodaj nove
+        const cottage = await Cottage.findById(id);
+        if (cottage) {
+          update.images = [...(cottage.images || []), ...newImages];
+        }
       }
 
       const doc = await Cottage.findByIdAndUpdate(id, update, { new: true });

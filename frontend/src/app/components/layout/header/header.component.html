@@ -1,5 +1,19 @@
 <nav class="navbar d-flex gap-3 align-items-center px-3 py-2 border-bottom">
-  <a routerLink="/cottages" class="fw-bold text-decoration-none">Cottages</a>
+  <!-- Logo/Home - dinamički po roli -->
+  @if (auth.hasRole('vlasnik')) {
+    <a routerLink="/owner/cottages" class="fw-bold text-decoration-none">
+      🏡 Holiday Huts
+    </a>
+  } @else if (auth.hasRole('admin')) {
+    <a routerLink="/admin/cottages" class="fw-bold text-decoration-none">
+      🏡 Holiday Huts
+    </a>
+  } @else {
+    <a routerLink="/cottages" class="fw-bold text-decoration-none">
+      🏡 Holiday Huts
+    </a>
+  }
+  
   <span class="flex-grow-1"></span>
 
   @if (!auth.isLoggedIn()) {
@@ -8,19 +22,29 @@
   }
 
   @if (auth.hasRole('turista')) {
+    <a routerLink="/cottages">Sve vikendice</a>
+    <a routerLink="/me/reservations">Moje rezervacije</a>
     <div class="d-flex align-items-center gap-2">
       <img 
         [src]="getUserImageUrl()" 
         alt="avatar" 
         style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%; border: 1px solid #dee2e6;"
       />
-      <a routerLink="/me">Moj profil</a>
+      <a routerLink="/me">Profil</a>
     </div>
-    <a routerLink="/me/reservations">Moje rezervacije</a>
   }
 
   @if (auth.hasRole('vlasnik')) {
     <a routerLink="/owner/cottages">Moje vikendice</a>
+    <a routerLink="/owner/reservations">Rezervacije</a>
+    <div class="d-flex align-items-center gap-2">
+      <img 
+        [src]="getUserImageUrl()" 
+        alt="avatar" 
+        style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%; border: 1px solid #dee2e6;"
+      />
+      <a routerLink="/me">Profil</a>
+    </div>
   }
 
   @if (auth.hasRole('admin')) {

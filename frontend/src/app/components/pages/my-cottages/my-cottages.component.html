@@ -36,8 +36,8 @@
                 <tr>
                   <td>{{ cottage.title }}</td>
                   <td>{{ cottage.place }}</td>
-                  <td>{{ cottage.pricing?.summer || 0 }} RSD</td>
-                  <td>{{ cottage.pricing?.winter || 0 }} RSD</td>
+                  <td>{{ cottage.pricing?.summer || 0 }} EUR</td>
+                  <td>{{ cottage.pricing?.winter || 0 }} EUR</td>
                   <td>
                     <button class="btn btn-sm btn-primary me-1" (click)="showEditForm(cottage)">
                       ✏️ Izmeni
@@ -87,13 +87,43 @@
 
               <div class="row">
                 <div class="col-md-6 mb-3">
-                  <label class="form-label">Cena Leto (RSD)</label>
+                  <label class="form-label">Geografska širina (Latitude)</label>
+                  <input type="number" step="0.000001" class="form-control" [(ngModel)]="latitude" name="latitude" 
+                    placeholder="44.787197">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Geografska dužina (Longitude)</label>
+                  <input type="number" step="0.000001" class="form-control" [(ngModel)]="longitude" name="longitude" 
+                    placeholder="20.457273">
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Cena Leto (EUR)</label>
                   <input type="number" class="form-control" [(ngModel)]="summerPrice" name="summerPrice" min="0">
                 </div>
                 <div class="col-md-6 mb-3">
-                  <label class="form-label">Cena Zima (RSD)</label>
+                  <label class="form-label">Cena Zima (EUR)</label>
                   <input type="number" class="form-control" [(ngModel)]="winterPrice" name="winterPrice" min="0">
                 </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Slike vikendice</label>
+                <input type="file" class="form-control" (change)="onFileChange($event)" 
+                  accept="image/jpeg,image/jpg,image/png" multiple>
+                <small class="text-muted">Možete izabrati više slika odjednom (JPG, PNG)</small>
+                @if (imageFiles.length > 0) {
+                  <div class="mt-2">
+                    <strong>Izabrano slika: {{imageFiles.length}}</strong>
+                  </div>
+                }
+                @if (isEditMode && existingImages.length > 0) {
+                  <div class="mt-2">
+                    <small class="text-info">Postojeće slike: {{existingImages.length}}</small>
+                  </div>
+                }
               </div>
 
               <div class="d-flex gap-2">

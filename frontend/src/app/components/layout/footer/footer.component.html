@@ -5,17 +5,35 @@
       <div class="col-md-4 mb-3">
         <h5>Holiday Huts</h5>
         <p class="text-muted">
-          Vaša destinacija za najlepše vikendice. Pronađite savršeno mesto za odmor.
+          Projekat iz Programiranja Internet Aplikacija - ETF 2025.
         </p>
       </div>
 
-      <!-- Linkovi -->
+      <!-- Linkovi - dinamički po roli -->
       <div class="col-md-4 mb-3">
         <h5>Linkovi</h5>
         <ul class="list-unstyled">
-          <li><a routerLink="/cottages" class="text-decoration-none">Sve vikendice</a></li>
-          <li><a routerLink="/login" class="text-decoration-none">Prijava</a></li>
-          <li><a routerLink="/register" class="text-decoration-none">Registracija</a></li>
+          @if (!auth.isLoggedIn()) {
+            <li><a routerLink="/cottages" class="text-decoration-none">Sve vikendice</a></li>
+            <li><a routerLink="/login" class="text-decoration-none">Prijava</a></li>
+            <li><a routerLink="/register" class="text-decoration-none">Registracija</a></li>
+          }
+          
+          @if (auth.hasRole('turista')) {
+            <li><a routerLink="/cottages" class="text-decoration-none">Sve vikendice</a></li>
+            <li><a routerLink="/me/reservations" class="text-decoration-none">Moje rezervacije</a></li>
+            <li><a routerLink="/me" class="text-decoration-none">Moj profil</a></li>
+          }
+          
+          @if (auth.hasRole('vlasnik')) {
+            <li><a routerLink="/owner/cottages" class="text-decoration-none">Moje vikendice</a></li>
+            <li><a routerLink="/owner/reservations" class="text-decoration-none">Rezervacije</a></li>
+            <li><a routerLink="/me" class="text-decoration-none">Moj profil</a></li>
+          }
+          
+          @if (auth.hasRole('admin')) {
+            <li><a routerLink="/admin/cottages" class="text-decoration-none">Admin panel</a></li>
+          }
         </ul>
       </div>
 
@@ -23,7 +41,7 @@
       <div class="col-md-4 mb-3">
         <h5>Kontakt</h5>
         <ul class="list-unstyled text-muted">
-          <li><i class="bi bi-envelope"></i> info&#64;holidayhuts.com</li>
+          <li><i class="bi bi-envelope"></i> ik200296d&#64;student.etf.bg.ac.rs</li>
           <li><i class="bi bi-telephone"></i> +381 11 123 4567</li>
           <li><i class="bi bi-geo-alt"></i> Beograd, Srbija</li>
         </ul>

@@ -14,12 +14,16 @@ export class ReservationService {
     return this.http.get(`${environment.apiBaseUrl}/reservations/mine/${touristId}`);
   }
 
+  getForOwner(ownerId: string) {
+    return this.http.get(`${environment.apiBaseUrl}/reservations/owner/${ownerId}`);
+  }
+
   approve(id: string) {
     return this.http.patch(`${environment.apiBaseUrl}/reservations/${id}/approve`, {});
   }
 
-  reject(id: string, reason?: string) {
-    return this.http.patch(`${environment.apiBaseUrl}/reservations/${id}/reject`, { reason });
+  reject(id: string, ownerNote: string) {
+    return this.http.patch(`${environment.apiBaseUrl}/reservations/${id}/reject`, { ownerNote });
   }
 
   cancel(id: string) {

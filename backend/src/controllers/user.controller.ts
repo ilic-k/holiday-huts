@@ -2,7 +2,7 @@ import { NextFunction, RequestHandler, Request, Response } from "express";
 import User from "../models/User";
 import { sanitize } from "../utils/sanitize";
 import { processProfileImage } from "../middlewares/image";
-import path from "path";
+import fs from "fs/promises";
 
 export class UserController {
 
@@ -43,9 +43,27 @@ export class UserController {
       // Ako postoji nova profilna slika
       if (req.file?.path) {
         const safeUser = String(username).replace(/[^a-zA-Z0-9_-]/g, '');
-        const final = path.join('uploads', 'users', `${safeUser}.png`);
-        await processProfileImage(req.file.path, final);
-        user.image = final;
+        // Koristi / umesto path.join za konzistentne URL putanje
+        const final = `uploads/users/${safeUser}.png`;
+        
+        // Obriši staru sliku ako postoji (pre nego što se čuva nova)
+        const oldImage = user.image;
+        if (oldImage && oldImage !== final) {
+          try {
+            await fs.unlink(oldImage);
+          } catch {} // Ignoriši grešku ako fajl ne postoji
+        }
+        
+        try {
+          await processProfileImage(req.file.path, final);
+          user.image = final;
+        } catch (imgErr) {
+          // Ako obrada slike failuje, cleanup privremenog fajla
+          try {
+            await fs.unlink(req.file.path);
+          } catch {}
+          throw imgErr;
+        }
       }
 
       await user.save();

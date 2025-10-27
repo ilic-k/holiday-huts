@@ -46,7 +46,7 @@ export class AuthController {
       let imagePath = 'uploads/defaults/user.png';
       if (req.file?.path) {
         const safeUser = String(username).replace(/[^a-zA-Z0-9_-]/g, '');
-        const finalPath = path.join('uploads', 'users', `${safeUser}.png`);
+        const finalPath = `uploads/users/${safeUser}.png`;
         await processProfileImage(req.file.path, finalPath);
         imagePath = finalPath;
       }

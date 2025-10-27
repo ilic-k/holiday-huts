@@ -8,6 +8,7 @@ import { CottageDetailsComponent } from './components/pages/cottage-details/cott
 import { ProfileComponent } from './components/pages/profile/profile.component';
 import { MyReservationsComponent } from './components/pages/my-reservations/my-reservations.component';
 import { MyCottagesComponent } from './components/pages/my-cottages/my-cottages.component';
+import { OwnerReservationsComponent } from './components/pages/owner-reservations/owner-reservations.component';
 import { AdminCottagesComponent } from './components/pages/admin-cottages/admin-cottages.component';
 
 export const routes: Routes = [
@@ -28,6 +29,7 @@ export const routes: Routes = [
 
   // OWNER (vlasnik)
   { path: 'owner/cottages', component: MyCottagesComponent },
+  { path: 'owner/reservations', component: OwnerReservationsComponent },
 
   // ADMIN
   { path: 'admin/cottages', component: AdminCottagesComponent },

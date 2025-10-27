@@ -191,9 +191,15 @@ export class ReservationController {
     try {
       const { id } = req.params;
       const { ownerNote } = req.body;
+
+      if (!ownerNote || ownerNote.trim().length === 0) {
+        res.status(400).json({ message: "Morate uneti razlog odbijanja." });
+        return;
+      }
+
       const reservation = await Reservation.findByIdAndUpdate(
         id,
-        { status: "rejected", ownerNote: ownerNote },
+        { status: "rejected", ownerNote: ownerNote.trim() },
         { new: true }
       );
       if (!reservation) {
@@ -248,7 +254,8 @@ leaveReview: RequestHandler = async (req, res, next) => {
     const eligible =
       (reservation.status === 'approved' || reservation.status === 'completed' || reservation.status === 'finished') &&
       reservation.endDate < now &&
-      reservation.rating == null && reservation.comment == null;  // još nije ocenjena
+      (reservation.rating == null || reservation.rating === 0) &&  // još nije ocenjena
+      (!reservation.comment || reservation.comment.trim() === '');  // nema komentar ili je prazan
 
     if (!eligible) {
       res.status(400).json({ message: 'Ocenjivanje nije dozvoljeno za ovu rezervaciju.' });

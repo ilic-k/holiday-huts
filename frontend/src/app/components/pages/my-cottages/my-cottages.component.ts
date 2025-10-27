@@ -26,6 +26,10 @@ export class MyCottagesComponent {
   winterPrice = 0;
   services = '';
   phone = '';
+  latitude = 0;
+  longitude = 0;
+  imageFiles: File[] = [];
+  existingImages: string[] = [];
 
   ngOnInit() {
     this.loadCottages();
@@ -62,6 +66,10 @@ export class MyCottagesComponent {
     this.winterPrice = cottage.pricing?.winter ?? 0;
     this.services = cottage.services ?? '';
     this.phone = cottage.phone ?? '';
+    this.latitude = cottage.coords?.lat ?? 0;
+    this.longitude = cottage.coords?.lng ?? 0;
+    this.existingImages = cottage.images ?? [];
+    this.imageFiles = [];
   }
 
   resetForm() {
@@ -71,12 +79,23 @@ export class MyCottagesComponent {
     this.winterPrice = 0;
     this.services = '';
     this.phone = '';
+    this.latitude = 0;
+    this.longitude = 0;
+    this.imageFiles = [];
+    this.existingImages = [];
     this.currentCottageId = null;
   }
 
   cancelForm() {
     this.isFormVisible = false;
     this.resetForm();
+  }
+
+  onFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      this.imageFiles = Array.from(input.files);
+    }
   }
 
   saveCottage() {
@@ -91,21 +110,26 @@ export class MyCottagesComponent {
       return;
     }
 
-    const body = {
-      title: this.title,
-      place: this.place,
-      pricing: {
-        summer: this.summerPrice,
-        winter: this.winterPrice
-      },
-      services: this.services,
-      phone: this.phone,
-      ownerId: user._id
-    };
+    // Koristi FormData za upload slika
+    const formData = new FormData();
+    formData.append('title', this.title);
+    formData.append('place', this.place);
+    formData.append('services', this.services || '');
+    formData.append('phone', this.phone || '');
+    formData.append('pricing[summer]', this.summerPrice.toString());
+    formData.append('pricing[winter]', this.winterPrice.toString());
+    formData.append('coords[lat]', this.latitude.toString());
+    formData.append('coords[lng]', this.longitude.toString());
+    formData.append('ownerId', user._id);
+
+    // Dodaj slike
+    this.imageFiles.forEach((file) => {
+      formData.append('images', file);
+    });
 
     if (this.isEditMode && this.currentCottageId) {
       // Update existing cottage
-      this.cottages.update(this.currentCottageId, body).subscribe({
+      this.cottages.update(this.currentCottageId, formData).subscribe({
         next: () => {
           alert('Vikendica uspešno ažurirana!');
           this.cancelForm();
@@ -117,7 +141,7 @@ export class MyCottagesComponent {
       });
     } else {
       // Create new cottage
-      this.cottages.create(body).subscribe({
+      this.cottages.create(formData).subscribe({
         next: () => {
           alert('Vikendica uspešno dodata!');
           this.cancelForm();
