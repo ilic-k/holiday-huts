@@ -1,4 +1,4 @@
-import { Component, inject, AfterViewInit } from '@angular/core';
+import { Component, inject, AfterViewInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
@@ -13,7 +13,7 @@ import { ReservationService } from '../../../services/reservation.service';
   imports: [RouterLink, FormsModule, DatePipe],
   templateUrl: './cottage-details.component.html'
 })
-export class CottageDetailsComponent implements AfterViewInit {
+export class CottageDetailsComponent implements AfterViewInit, OnDestroy {
   route = inject(ActivatedRoute);
   cottages = inject(CottageService);
   reservations = inject(ReservationService);
@@ -71,6 +71,14 @@ export class CottageDetailsComponent implements AfterViewInit {
     this.mapReady = true;
     if (this.cottage?.coords) {
       setTimeout(() => this.initMap(), 100);
+    }
+  }
+
+  ngOnDestroy() {
+    // Očisti mapu da se spreči memory leak i omogući ponovno kreiranje
+    if (this.map) {
+      this.map.remove();
+      this.map = null;
     }
   }
 

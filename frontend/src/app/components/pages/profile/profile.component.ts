@@ -7,7 +7,7 @@ import { AuthService } from '../../../services/auth.service';
 import { environment } from '../../../../env/environment';
 
 const PASS_RE =
-/^(?=.{6,10}$)(?=[A-Za-z])[A-Za-z](?=(?:.*[a-z]){3,})(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).*$/;
+  /^(?=[A-Za-z])(?=.*[A-Z])(?=(?:.*[a-z]){3,})(?=.*\d)(?=.*[^A-Za-z0-9]).{6,10}$/;
 
 @Component({
   selector: 'app-profile',

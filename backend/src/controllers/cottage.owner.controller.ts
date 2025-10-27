@@ -147,7 +147,7 @@ export class CottageOwnerController {
       }
       const data = await Cottage.find({ owner: ownerId })
         .sort({ createdAt: -1 })
-        .select('title place images pricing ratingAvg ratingCount blockedUntil');
+        .select('title place images pricing coords services phone ratingAvg ratingCount blockedUntil');
       res.status(200).json({ message: 'OK', data });
     } catch (err) { next(err); }
   };
