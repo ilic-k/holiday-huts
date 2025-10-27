@@ -1,6 +1,24 @@
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { Request, Response, NextFunction } from 'express';
+
+// Generic upload error handler wrapper
+export const uploadMiddleware = (uploadFn: any) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    uploadFn(req, res, (err: any) => {
+      if (err instanceof multer.MulterError) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+          return res.status(400).json({ message: 'Slika je prevelika. Maksimalna veličina je 5MB.' });
+        }
+        return res.status(400).json({ message: err.message });
+      } else if (err) {
+        return res.status(400).json({ message: err.message || 'Greška prilikom upload-a slike.' });
+      }
+      next();
+    });
+  };
+};
 
 const storage = multer.diskStorage({
   destination: (_, __, cb) => cb(null, 'uploads/tmp'),
