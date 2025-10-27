@@ -168,9 +168,7 @@ async function runSeed() {
       pricing: { summer: 80, winter: 60 },
       coords: { lat: 43.8908, lng: 19.3547 },
       images: [], // Slike se dodaju kroz upload sistem
-      owner: owner1._id,
-      ratingAvg: 4.5,
-      ratingCount: 8
+      owner: owner1._id
     });
 
     const cottage2 = await Cottage.create({
@@ -181,9 +179,7 @@ async function runSeed() {
       pricing: { summer: 100, winter: 75 },
       coords: { lat: 43.7275, lng: 19.7136 },
       images: [], // Slike se dodaju kroz upload sistem
-      owner: owner2._id,
-      ratingAvg: 4.8,
-      ratingCount: 15
+      owner: owner2._id
     });
 
     const cottage3 = await Cottage.create({
@@ -194,9 +190,7 @@ async function runSeed() {
       pricing: { summer: 60, winter: 50 },
       coords: { lat: 44.0961, lng: 20.0214 },
       images: [],
-      owner: owner1._id,
-      ratingAvg: 1.0, // 3 ocene sa vrednostima 1, 1, 1 -> avg = 1.0
-      ratingCount: 3
+      owner: owner1._id
     });
 
     const cottage4 = await Cottage.create({
@@ -207,9 +201,7 @@ async function runSeed() {
       pricing: { summer: 70, winter: 120 },
       coords: { lat: 43.2897, lng: 20.8169 },
       images: [], // Slike se dodaju kroz upload sistem
-      owner: owner2._id,
-      ratingAvg: 4.9,
-      ratingCount: 22
+      owner: owner2._id
     });
 
     // Blokirana vikendica
@@ -222,9 +214,7 @@ async function runSeed() {
       coords: { lat: 43.6208, lng: 20.8947 },
       images: [],
       owner: owner1._id,
-      blockedUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // blokirano 30 dana
-      ratingAvg: 1.5,
-      ratingCount: 4
+      blockedUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // blokirano 30 dana
     });
 
     console.log('🏠 Cottages seeded (5 cottages)');
@@ -706,6 +696,43 @@ async function runSeed() {
     });
 
     console.log('📅 Reservations seeded (36+ reservations with various statuses)');
+
+    // --- CALCULATE AND UPDATE COTTAGE RATINGS ---
+    console.log('');
+    console.log('📊 Calculating cottage ratings from actual reservations...');
+    
+    const cottages = [cottage1, cottage2, cottage3, cottage4, cottage5];
+    
+    for (const cottage of cottages) {
+      // Pronađi sve finished rezervacije sa ocenom za ovu vikendicu
+      const reservationsWithRating = await Reservation.find({
+        cottage: cottage._id,
+        status: 'finished',
+        rating: { $ne: null }
+      });
+
+      if (reservationsWithRating.length > 0) {
+        // Izračunaj prosek
+        const totalRating = reservationsWithRating.reduce((sum, res) => sum + (res.rating || 0), 0);
+        const avgRating = totalRating / reservationsWithRating.length;
+        
+        // Update cottage sa stvarnim vrednostima
+        await Cottage.findByIdAndUpdate(cottage._id, {
+          ratingAvg: Math.round(avgRating * 10) / 10, // zaokruži na 1 decimalu
+          ratingCount: reservationsWithRating.length
+        });
+
+        console.log(`  ✓ ${cottage.title}: ${reservationsWithRating.length} reviews, avg ${(Math.round(avgRating * 10) / 10).toFixed(1)}`);
+      } else {
+        // Nema ocena
+        await Cottage.findByIdAndUpdate(cottage._id, {
+          ratingAvg: 0,
+          ratingCount: 0
+        });
+        console.log(`  ○ ${cottage.title}: No reviews yet`);
+      }
+    }
+
     console.log('');
     console.log('✅ SEED COMPLETED SUCCESSFULLY!');
     console.log('');
@@ -720,14 +747,11 @@ async function runSeed() {
     console.log('  Users: admin, vlada, milica, pera, ana, jovan (pending)');
     console.log('');
     console.log('📝 Notes:');
-    console.log('  - Cottage images are empty - add them through the upload system');
+    console.log('  - Cottage images are empty - add them through upload system');
     console.log('  - User images use default: uploads/defaults/user.png');
-    console.log('  - Cottage5 is blocked for 30 days due to low ratings (<3.0 avg)');
-    console.log('  - Rating averages match actual finished reservations:');
-    console.log('    * Cottage1 (Tara): 4.5 avg from 8 reviews');
-    console.log('    * Cottage2 (Zlatibor): 4.8 avg from 5 reviews');
-    console.log('    * Cottage3 (Divčibare): 1.0 avg from 3 reviews - CRVENA u admin panelu! ⚠️');
-    console.log('    * Cottage4 (Kopaonik): ~4.75 avg from 4 reviews');
+    console.log('  - Cottage5 is blocked for 30 days due to maintenance');
+    console.log('  - Rating averages calculated dynamically from finished reservations');
+    console.log('  - Cottage3 (Divčibare) has 3 consecutive ratings < 2 → RED in admin panel! ⚠️');
 
     await mongoose.disconnect();
   } catch (err) {
