@@ -5,46 +5,67 @@ Thumbs.db
 *.tmp
 *.bak
 *.swp
-*.env
+
+# === ENVIRONMENT ===
+.env
 .env.*
+!.env.example
 .env.local
 .env.development.local
 .env.production.local
 
-# === NODE / EXPRESS / BACKEND ===
+# === NODE / DEPENDENCIES ===
 node_modules/
 dist/
 build/
-coverage/
-uploads/
-tmp/
 *.tsbuildinfo
 
-# ako imaš TypeScript u backu
-backend/**/*.js
-backend/**/*.js.map
+# NOTE: Lock fajlove NEMOJ ignorisati - važni su za konzistentne verzije!
+# package-lock.json, yarn.lock, pnpm-lock.yaml treba da budu u repo-u
 
-# === ANGULAR / FRONTEND ===
-frontend/node_modules/
-frontend/dist/
+# === BACKEND BUILD OUTPUT ===
+# (već pokriveno globalnim dist/ i build/)
+
+# === FRONTEND BUILD OUTPUT ===
 frontend/.angular/
 frontend/.cache/
-frontend/.vscode/
-frontend/coverage/
-frontend/tmp/
-frontend/.sass-cache/
 
-# === TEST / TOOLS ===
+# === UPLOADS / DYNAMICALLY GENERATED ===
+# Ignore dynamic user-uploaded content
+backend/uploads/tmp/
+backend/uploads/users/
+backend/uploads/cottages/
+
+# Keep default images in repo
+!backend/uploads/defaults/
+
+# === DATABASE / SEED DATA ===
+dump/
+seed/
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# === IDE / EDITOR ===
 .idea/
-.vscode/
 *.iml
-.nyc_output/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+
+# === TEST / COVERAGE ===
 coverage/
+.nyc_output/
 reports/
 jest-report/
 jest-html-reporters-*.html
 
-# === OS / EDITOR TEMP ===
+# === LOGS ===
+logs/
 *.pid
 *.seed
 *.pid.lock
@@ -52,29 +73,18 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
-
-# === UPLOADS / IMAGES (dinamički generisano) ===
-uploads/tmp/
-uploads/users/
-uploads/cottages/
-uploads/defaults/
-
-# === MONGODB DUMP / SEED DATA ===
-dump/
-seed/
-data/
 
 # === BUILD / DEPLOY ===
-/dist/
-/build/
-/out/
-/logs/
-/coverage/
-/.terraform/
-/.cache/
-/.next/
-/vercel/
-/.venv/
+out/
+.terraform/
+.next/
+.vercel/
+.venv/
+.turbo/
+.nx/
+
+# === TEMP FILES ===
+tmp/
+*.local
+*.private.*
+

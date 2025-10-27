@@ -48,7 +48,8 @@
   }
 
   @if (auth.hasRole('admin')) {
-    <a routerLink="/admin/cottages">Admin panel</a>
+    <a routerLink="/admin/users">Korisnici</a>
+    <a routerLink="/admin/cottages">Vikendice</a>
   }
 
   @if (auth.isLoggedIn()) {

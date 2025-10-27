@@ -35,7 +35,8 @@ async function runSeed() {
       address: 'Knez Mihailova 1',
       image: 'uploads/defaults/user.png',
       creditCard: '4532123456789012',
-      approved: true
+      approved: true,
+      active: true
     });
 
     const owner1 = await User.create({
@@ -50,7 +51,8 @@ async function runSeed() {
       address: 'Cara Dušana 45',
       image: 'uploads/defaults/user.png',
       creditCard: '5425233430109903',
-      approved: true
+      approved: true,
+      active: true
     });
 
     const owner2 = await User.create({
@@ -65,7 +67,8 @@ async function runSeed() {
       address: 'Zmaj Jovina 12',
       image: 'uploads/defaults/user.png',
       creditCard: '4916338506082832',
-      approved: true
+      approved: true,
+      active: true
     });
 
     const tourist1 = await User.create({
@@ -80,7 +83,8 @@ async function runSeed() {
       address: 'Bulevar Oslobođenja 100',
       image: 'uploads/defaults/user.png',
       creditCard: '4024007134564842',
-      approved: true
+      approved: true,
+      active: true
     });
 
     const tourist2 = await User.create({
@@ -95,7 +99,8 @@ async function runSeed() {
       address: 'Hajduk Veljkova 22',
       image: 'uploads/defaults/user.png',
       creditCard: '5425233430109903',
-      approved: true
+      approved: true,
+      active: true
     });
 
     // Neodobreni turista
@@ -111,7 +116,36 @@ async function runSeed() {
       address: 'Svetog Save 5',
       image: 'uploads/defaults/user.png',
       creditCard: '4532123456789012',
-      approved: false
+      approved: false,
+      active: true
+    });
+
+    // Neodobreni vlasnik
+    const pendingOwner = await User.create({
+      username: 'stefan',
+      passwordHash,
+      role: 'vlasnik',
+      name: 'Stefan',
+      lastname: 'Stefanović',
+      email: 'stefan@vikendice.rs',
+      phone: '+381 65 111 2223',
+      gender: 'M',
+      address: 'Njegoševa 88',
+      image: 'uploads/defaults/user.png',
+      creditCard: '5425233430109903',
+      approved: false,
+      active: true
+    });
+
+    // Odbijeni korisnici (username i email ne mogu biti ponovo korišćeni)
+    await RejectedUser.create({
+      username: 'spammer123',
+      email: 'spam@fake.com'
+    });
+
+    await RejectedUser.create({
+      username: 'hacker',
+      email: 'hacker@malicious.org'
     });
 
     console.log('👤 Users seeded (6 users)');

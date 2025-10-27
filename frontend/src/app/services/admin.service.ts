@@ -8,7 +8,32 @@ import { environment } from '../../env/environment';
 export class AdminService {
   http = inject(HttpClient);
 
-  // Korisnici
+  // ========== USER MANAGEMENT ==========
+  getAllUsers() {
+    return this.http.get(`${environment.apiBaseUrl}/admin/users`);
+  }
+
+  createUser(userData: any) {
+    return this.http.post(`${environment.apiBaseUrl}/admin/users`, userData);
+  }
+
+  updateUser(id: string, updates: any) {
+    return this.http.patch(`${environment.apiBaseUrl}/admin/users/${id}`, updates);
+  }
+
+  deleteUser(id: string) {
+    return this.http.delete(`${environment.apiBaseUrl}/admin/users/${id}`);
+  }
+
+  deactivateUser(id: string) {
+    return this.http.patch(`${environment.apiBaseUrl}/admin/users/${id}/deactivate`, {});
+  }
+
+  activateUser(id: string) {
+    return this.http.patch(`${environment.apiBaseUrl}/admin/users/${id}/activate`, {});
+  }
+
+  // ========== REGISTRATION APPROVAL ==========
   getPendingUsers() {
     return this.http.get(`${environment.apiBaseUrl}/admin/users/pending`);
   }
@@ -21,7 +46,7 @@ export class AdminService {
     return this.http.delete(`${environment.apiBaseUrl}/admin/users/${id}/reject`);
   }
 
-  // Vikendice - Quality Control
+  // ========== COTTAGE QUALITY CONTROL ==========
   getAllCottagesQuality() {
     return this.http.get(`${environment.apiBaseUrl}/admin/cottages/all`);
   }

@@ -10,6 +10,7 @@ import { MyReservationsComponent } from './components/pages/my-reservations/my-r
 import { MyCottagesComponent } from './components/pages/my-cottages/my-cottages.component';
 import { OwnerReservationsComponent } from './components/pages/owner-reservations/owner-reservations.component';
 import { AdminCottagesComponent } from './components/pages/admin-cottages/admin-cottages.component';
+import { AdminUsersComponent } from './components/pages/admin-users/admin-users.component';
 
 export const routes: Routes = [
   // AUTH
@@ -32,6 +33,7 @@ export const routes: Routes = [
   { path: 'owner/reservations', component: OwnerReservationsComponent },
 
   // ADMIN
+  { path: 'admin/users', component: AdminUsersComponent },
   { path: 'admin/cottages', component: AdminCottagesComponent },
 
   // DEFAULT + FALLBACK

@@ -97,14 +97,16 @@
                 }
               </td>
               <td>
-                @if (!isBlocked(cottage)) {
+                @if (shouldHighlight(cottage) && !isBlocked(cottage)) {
                   <button 
                     class="btn btn-sm btn-danger"
                     (click)="blockCottage(cottage)">
                     🔒 Blokiraj 48h
                   </button>
-                } @else {
+                } @else if (isBlocked(cottage)) {
                   <span class="badge bg-secondary">Blokirana</span>
+                } @else {
+                  <span class="text-muted">-</span>
                 }
               </td>
             </tr>

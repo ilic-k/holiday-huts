@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema(
 
     creditCard: { type: String }, // čuvaj maskirano (npr. **** **** **** 1234) ili plain samo za vežbe
     approved: { type: Boolean, default: false }, // admin mora da odobri registraciju
+    active: { type: Boolean, default: true }, // deaktivacija korisnika
   },
   { timestamps: true }
 );

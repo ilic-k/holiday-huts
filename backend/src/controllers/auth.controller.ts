@@ -4,6 +4,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import bcrypt from 'bcrypt';
 import User from '../models/User';
+import RejectedUser from '../models/RejectedUser';
 import { detectCardType, PASS_RE } from '../utils/validators';
 import { processProfileImage } from '../middlewares/image'; // proveri putanju
 import { sanitize } from '../utils/sanitize';
@@ -31,6 +32,18 @@ export class AuthController {
       if (!detectCardType(String(creditCard || '').trim())) {
         if (req.file?.path) await fs.unlink(req.file.path);
         res.status(400).json({ message: 'Broj kreditne kartice nije validan' });
+        return;
+      }
+
+      // Proveri da li su username ili email odbijeni
+      const rejected = await RejectedUser.findOne({
+        $or: [{ username }, { email }]
+      });
+      if (rejected) {
+        if (req.file?.path) await fs.unlink(req.file.path);
+        res.status(400).json({ 
+          message: 'Korisničko ime ili email su prethodno odbijeni i ne mogu se koristiti' 
+        });
         return;
       }
 
@@ -92,6 +105,12 @@ export class AuthController {
 
       if (!user.approved) {
         res.status(403).json({ message: 'Nalog nije odobren od strane administratora' });
+        return;
+      }
+
+      // Proveri da li je korisnik deaktiviran
+      if (!user.active) {
+        res.status(403).json({ message: 'Nalog je deaktiviran' });
         return;
       }
 
